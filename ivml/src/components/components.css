@@ -1,0 +1,126 @@
+.vis-node {
+    height: 100px;
+    width: 200px;
+    border: 1px solid rgb(0, 0, 0);
+    padding: 10px;
+    background: #00FFFF;
+  }
+  
+  .vis-node label {
+    display: block;
+    color: #777;
+    font-size: 12px;
+  }
+
+.container{
+  position: absolute;
+  top:5%;
+  right: 5%;
+}
+
+.miniContainer{
+  position: absolute;
+  right: 5%;
+}
+
+.buttonSize {
+  padding: 1% 1%;
+  text-align: center;
+  display: inline-block;
+  margin: 1px 70%;
+}
+
+.miniButtonSize{
+  padding: 5% 5%;
+  text-align: center;
+  display: block;
+}
+
+
+.iconSize {font-size: 7px;}
+
+
+.rect-node {
+  height: 50px;
+  width: 100px;
+  border: 1px solid rgb(0, 0, 0);
+  padding: 5px;
+  background: #7b8080;
+}
+
+.dados-node {
+  height: 10px;
+  border: 1px solid rgb(0, 0, 0);
+  padding: 5px;
+  background: rgb(255, 255, 255);
+  display:inline-flex;
+  justify-content:space-between;
+}
+
+.titulo-node {
+  height: 10px;
+  width: 50px;
+  border: 1px solid rgb(0, 0, 0);
+  padding: 5px;
+  background: rgba(63, 59, 59, 0.733);
+  display:flex;
+  justify-content:space-between;
+}
+
+.dados-node label {
+  display: block;
+  color: #777;
+  font-size: 12px;
+}
+
+.text-margin{
+  margin: 0px 20px 0% 0px;
+}
+
+.acao-dados-node{
+  height: 50px;
+  width: 100px;
+  border: 1px solid rgb(0, 0, 0);
+  padding: 5px;
+  background: #5e0499;
+  
+}
+
+
+
+.var-node {
+  height: 15px;
+  width: 20px;
+  padding: 5px;
+}
+.graph-node {
+  height: 30px;
+  width: 40px;
+  padding: 5px;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr)
+}
+.item {
+  border-radius: 20px;
+}
+
+.save__controls {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 4;
+  font-size: 12px;
+}
+
+.corner-element {
+  width: 20px;
+  height: 20px;
+  background: rgb(255, 172, 19);
+  position: absolute;
+  top: 1;
+  right: 1;
+  z-index: 1;
+}
