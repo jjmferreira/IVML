@@ -16,10 +16,11 @@ import tabela from "../imagens/Gráficos/Tabela.PNG"
 import texto from "../imagens/Gráficos/Texto.PNG"
 import { useState } from "react"
 
-const DynamicForm = ({changeDataName, changeVar, handleVarType, changeGraph, onTry, dataExplain, specifyData, props}) => {
+const DynamicForm = ({changeDataName, changeVar, handleVarType, changeGraph, onTry, dataExplain, visComp, changeHeight,changeWidth, specifyData, props}) => {
 
 
     const graficos = [area, barras, barrasEmp,barrasEmp100,dispersao, gant, hexabin, linha, mapa, mapaCalor, mapaCoropletico, multiLinhas, pontos, relogio, tabela, texto]
+    const vars =["Cor", "Forma", "Tamanho"]
     const [test, setTest] = useState("")
 
 
@@ -29,17 +30,19 @@ const DynamicForm = ({changeDataName, changeVar, handleVarType, changeGraph, onT
         <input id="text" type="text" onChange={(e) => specifyData(e)}/>
         <button onClick={props.handleClose}>x</button>
         <br></br><br></br></>)*/
+        break;
         default: break;
       } 
     }
 
     return (
         <>
-        {changeVar ? <select name="category" onChange={event => handleVarType(event)}>
-        <option id="0" >Cor</option>
-        <option id="1" >Tamanho</option>
-        <option id="2" >Forma</option>
-        </select> : 
+        {changeVar ? <div className="wrapper">
+         {vars.map((varType) => (
+            <div key={varType.id} onChange={event => handleVarType(event)} className="item"><label>{varType}</label>
+            <input type="radio" value={varType} name="var"/></div>
+           ))}
+         </div> : 
         
         changeGraph ? 
          <div className="wrapper">
@@ -64,10 +67,16 @@ const DynamicForm = ({changeDataName, changeVar, handleVarType, changeGraph, onT
                     <option id="6">Categórico</option>            
                     </select>
         <br></br><br></br>{handleDataSpec(test)} </div>  : 
-        
         <div><b><label htmlFor="text">Título do componente:</label></b>
         <input id="text" type="text" onChange={(e) => changeDataName(e)}/>
-        <br></br><br></br></div>}
+        <br></br><br></br>
+        <b><label htmlFor="text">Altura do componente:</label></b>
+        <input id="text" type="number" min="50"  step="10" onChange={(e) => changeHeight(e)}/>
+        <br></br><br></br>
+        <b><label htmlFor="text">Largura do componente:</label></b>
+        <input id="text" type="number" min="50"  step="10" onChange={(e) => changeWidth(e)}/>
+        <br></br><br></br></div> 
+        }
         </>
     )
   };

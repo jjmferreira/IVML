@@ -12,19 +12,25 @@ const removeStyle = {
 
 function LegendaComponente({data}) {
 
+  
+  const sizeValues = {
+    height: '' + data.height + 'px',
+    width: '' + data.width + 'px'
+  }
+
   return (
-    <div className="rect-node">
+    <div className="rect-node" style={sizeValues}>
+        <div className='container'>
+        <button className='buttonSize' name="Info" > <FaInfo pointerEvents={'none'} className='t'/> </button>
+        <button className='buttonSize' name="Add" > <FaPlus pointerEvents={'none'} className='t'/> </button>
+        <button className='buttonSize' name="Remove" > <FaTrashAlt style={removeStyle} pointerEvents={'none'} className='t'/> </button>
+        </div>
       {<Handle type="target" position={Position.Left} style={handleStyle}/>}
       <div>
         <div className='corner-element'>{data.compCounter}</div>
         <br></br>
          <small><small><b>{data.name}</b></small></small>
         <br></br>
-        <div className='container'>
-        <button className='buttonSize' name="Info" > <FaInfo pointerEvents={'none'}/> </button>
-        <button className='buttonSize' name="Add" > <FaPlus pointerEvents={'none'}/> </button>
-        <button className='buttonSize' name="Remove" > <FaTrashAlt style={removeStyle} pointerEvents={'none'}/> </button>
-        </div>
         {<Handle type="source" position={Position.Right}  style={handleStyle}/>}
       </div>
     </div>

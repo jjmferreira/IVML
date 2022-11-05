@@ -58,6 +58,9 @@ function App() {
   const [graphType, setGraphType] = useState("");
   const [dataComponent, setDataComponent] = useState('');
 
+  //definir restrições de escolhar
+
+
   const [isOpen, setIsOpen] = useState(false);
   const [actionForm, setActionForm] = useState(false);
   const [newComponent, setnewComponent] = useState(false);
@@ -77,6 +80,12 @@ function App() {
   const [nodeIDCounter, setNodeIDCounter] = useState(0);
   const [edgeIDCounter, setEdgeIDCounter] = useState(0);
 
+  //VisCompSize passed on Data
+  const [newH, setH] = useState('');
+  const [newW, setW] = useState('');
+
+
+
 
   //Save and restore - /Export and import
   const [rfInstance, setRfInstance] = useState(null);
@@ -89,6 +98,8 @@ function App() {
       localStorage.setItem(flowKey, JSON.stringify(json));
     }
   }, [rfInstance,visCounter, legCounter, filCounter,titCounter,nodeIDCounter, edgeIDCounter]);
+
+
 
   const exportJSON = () => {
     const flow = rfInstance.toObject();
@@ -176,7 +187,6 @@ function App() {
 
   const createDataComp = (parentNodeClicked) => {
     const nodeid = '' + nodeIDCounter + '';
-    console.log("Id dos nós: " + parentNodeClicked + " nos " + nodes)
     const nodeposition = { x: 0, y: 0 };
     let nodeCounter;
     switch(dataComponent){
@@ -184,7 +194,6 @@ function App() {
       nodeCounter = "V" + visCounter;
       break;
       case "legendaUpdater": setLegCounter(legCounter + 1);      
-      console.log(legCounter + " ENTREIII")
       nodeCounter = "L" + legCounter;
       break;
       case "filtroUpdater": setFilCounter(filCounter + 1);
@@ -195,7 +204,7 @@ function App() {
       break;
       default: console.log("Yooo"); break;
     }
-    const nodeData = { name: newDataName, datatype: newDataType, dataExplain: newDataSpec, varName: varType, graphType: graphType, compCounter: nodeCounter};
+    const nodeData = { name: newDataName, datatype: newDataType, dataExplain: newDataSpec, varName: varType, graphType: graphType, compCounter: nodeCounter, height: newH, width: newW};
     let extentAtt = 'parent';
     if(parentNodeClicked.length === 0){
       extentAtt = ''
@@ -208,11 +217,32 @@ function App() {
     setDataComponent("");
     setParentNodeClicked("");
     setNodeIDCounter(nodeIDCounter + 1);
+    setH('');
+    setW('');
     if(edgeActionStart !== "" && edgeActionEnd !== ""){
       setEdges([...edges, { id: '' + edgeIDCounter + '', source: edgeActionStart, target: nodeid, type: 'straight', sourceHandle: 'a' } , 
       { id: '' + Math.random() + '', source: nodeid, target: edgeActionEnd,animated:true, type: 'straight', sourceHandle: 'b'}])
       setEdgeIDCounter(edgeIDCounter + 1);
     }
+    closeWindow();
+  }
+
+  //UPDATE NODE INFO
+  const updateNodeData = (updatableNode) => {
+    nodes.filter((node) => {
+      if(node.id === updatableNode.id){
+        if(newH !== ""){
+          node.data.height = newH;
+        }
+        if (newW !== ""){
+          node.data.width = newW;
+        } 
+        
+        if (newDataName !== ""){
+          node.data.name = newDataName;
+        }
+      }
+    })
     closeWindow();
   }
 
@@ -262,17 +292,16 @@ function App() {
   const handleAddDataSpecs = (event) => {
     let aux = event.target.value
     setDataSpec([...newDataSpec, {aux}])
-    console.log(newDataName + " Dados Spec")
   }
 
 
   const handleVarType = (event) => {
     switch(event.target.value){
-      case "Cor":  setVarType(varType);
+      case "Cor":  setVarType(event.target.value);
       break;
-      case "Tamanho": setVarType(varType);
+      case "Tamanho": setVarType(event.target.value);
       break;
-      case "Forma": setVarType(varType);
+      case "Forma": setVarType(event.target.value);
       break;
       default: setVarType("Cor");
     } 
@@ -305,7 +334,29 @@ function App() {
  }
 
  const handleNameChange = (event) => {
-  setDataName(event.target.value)
+  if(event.target !== undefined){
+    setDataName(event.target.value)
+  }
+}
+
+const handleHeightChange = (event) => {
+  if(event.target !== undefined){
+    setH(event.target.value)
+  }
+}
+
+const handleWidhtChange = (event) => {
+  if(event.target !== undefined){
+    setW(event.target.value)
+  }
+}
+
+const handleUpdate = () =>{
+  updateNodeData(nodeInfo)
+  setH("");
+  setW("");
+  setDataName("");
+  closeWindow();
 }
 
  const infoDataSwitch = (dataComponent) => {
@@ -316,16 +367,16 @@ function App() {
     )
 
     case "visUpdater": 
-    return (<DynamicForm changeDataName={handleNameChange}></DynamicForm>)
+    return (<DynamicForm changeDataName={handleNameChange} changeHeight={handleHeightChange} changeWidth={handleWidhtChange}></DynamicForm>)
 
     case "legendaUpdater": 
-    return (<DynamicForm changeDataName={handleNameChange}></DynamicForm>)
+    return (<DynamicForm changeDataName={handleNameChange} changeHeight={handleHeightChange} changeWidth={handleWidhtChange}></DynamicForm>)
 
     case "tituloUpdater": 
-    return (<DynamicForm changeDataName={handleNameChange}></DynamicForm>)
+    return (<DynamicForm changeDataName={handleNameChange} changeHeight={handleHeightChange} changeWidth={handleWidhtChange}></DynamicForm>)
 
     case "filtroUpdater": 
-    return (<DynamicForm changeDataName={handleNameChange}></DynamicForm>)
+    return (<DynamicForm changeDataName={handleNameChange} changeHeight={handleHeightChange} changeWidth={handleWidhtChange}></DynamicForm>)
 
     case "imgUpdater": 
     return (<DynamicForm changeVar={true} handleVarType={handleVarType}></DynamicForm>)
@@ -338,7 +389,6 @@ function App() {
  }
  
  const iconsSetUp = (click, node) => {
-  console.log(click.target)
   let buttonName = click.target.name;
     switch(buttonName){
       case "Info": showInfoPopUp(node);
@@ -393,27 +443,20 @@ const handleActionFinish = (endNodeID) => {
       </div>
     </ReactFlow> : ""}
     {isOpen && newComponent ? <FormComponent
-      content={<>
-        <br></br> <br></br>
-        <select name="category" onChange={event => handleDataComponentChange(event.target.value)}>
-            <option id="0" >Dados</option>
-            <option id="1" >Visualização</option>
-            <option id="2" >Legenda</option>
-            <option id="3" >Filtro</option>
-            <option id="4" >Titulo</option>
-            <option id="5" >Variáveis Visuais</option>
-            <option id="6" >Tipos de Gráficos</option>
-        </select>
-        <br></br><br></br>
-        {infoDataSwitch(dataComponent)}
-        <button onClick={() => {createDataComp(parentNodeClicked)}}> Criar componente de dados!</button>
-      </>}
+      handleOptionSwitch={handleDataComponentChange}
+      dataSwitch={infoDataSwitch(dataComponent)}
+      createComp={() => createDataComp(parentNodeClicked)}
       handleClose = {closeWindow}
     ></FormComponent> : "" }
     {isOpen && infoForm ? <InfoComponent
       node={nodeInfo}
       handleClose = {closeWindow}
-    ></InfoComponent> : "" }
+      resizeH={handleHeightChange}
+      resizeW={handleWidhtChange}
+      changeDataName={handleNameChange}
+      handleCloseAndEdit={handleUpdate}
+    >
+    </InfoComponent> : "" }
     {isOpen && actionForm ? <AcaoDadosForm
       content={<>
         <br></br> <br></br>
@@ -424,7 +467,7 @@ const handleActionFinish = (endNodeID) => {
             <option value="DEFAULT" disabled>Escolhe o componente:</option>
             {allNodesName.map((node) => (
             <option key={node.id} value={node.id}>
-            {node.data.name}              
+            {node.data.compCounter}              
             </option>
           ))}
         </select>
@@ -436,7 +479,7 @@ const handleActionFinish = (endNodeID) => {
         <option value="DEFAULT" disabled>Escolhe o componente:</option>
             {allNodesName.map((node) => (
             <option key={node.id} value={node.id}>
-              {node.data.name}
+              {node.data.compCounter}
             </option>
           ))}
         </select>

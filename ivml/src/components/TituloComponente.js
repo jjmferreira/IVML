@@ -7,8 +7,14 @@ const removeStyle = {
 
 function TituloComponente({data}) {
 
+  
+  const sizeValues = {
+    height: '' + data.height + 'px',
+    width: '' + data.width + 'px'
+  }
+
   return (
-  <div className="titulo-node">
+  <div className="titulo-node" style={sizeValues}>
     <small><b>{data.name}</b></small>
     <div className='miniContainer'>
     <button className='miniButtonSize iconSize' name="Remove" > <FaTrashAlt style={removeStyle} pointerEvents={'none'}/> </button>
