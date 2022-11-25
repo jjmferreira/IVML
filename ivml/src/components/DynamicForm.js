@@ -16,12 +16,15 @@ import tabela from "../imagens/Gráficos/Tabela.PNG"
 import texto from "../imagens/Gráficos/Texto.PNG"
 import { useState } from "react"
 
-const DynamicForm = ({changeDataName, changeVar, handleVarType, changeGraph, onTry, dataExplain, visComp, changeHeight,changeWidth, specifyData, props}) => {
+const DynamicForm = ({changeDataName, changeVar, handleVarType, changeGraph, onTry, dataExplain, visComp, changeHeight,changeWidth, specifyData, needDimensions}) => {
 
-
+    const minSizes = 75;
     const graficos = [area, barras, barrasEmp,barrasEmp100,dispersao, gant, hexabin, linha, mapa, mapaCalor, mapaCoropletico, multiLinhas, pontos, relogio, tabela, texto]
     const vars =["Cor", "Forma", "Tamanho"]
     const [test, setTest] = useState("")
+    //index 0 - heigh; index 1 - width
+    const [currentSizeValues, setCurrentSizeValues] = useState([minSizes, minSizes])
+
 
 
     const handleDataSpec = (datatype) => {
@@ -67,14 +70,15 @@ const DynamicForm = ({changeDataName, changeVar, handleVarType, changeGraph, onT
                     <option id="6">Categórico</option>            
                     </select>
         <br></br><br></br>{handleDataSpec(test)} </div>  : 
+        
         <div><b><label htmlFor="text">Título do componente:</label></b>
         <input id="text" type="text" onChange={(e) => changeDataName(e)}/>
         <br></br><br></br>
         <b><label htmlFor="text">Altura do componente:</label></b>
-        <input id="text" type="number" min="50"  step="10" onChange={(e) => changeHeight(e)}/>
+        <input id="text" type="number" min="50" value={currentSizeValues[0]} step="10" onChange={(e) => {setCurrentSizeValues([e.target.value, currentSizeValues[1]]); changeHeight(e)}}/>
         <br></br><br></br>
         <b><label htmlFor="text">Largura do componente:</label></b>
-        <input id="text" type="number" min="50"  step="10" onChange={(e) => changeWidth(e)}/>
+        <input id="text" type="number" min="50"  value={currentSizeValues[1]} step="10" onChange={(e) => {setCurrentSizeValues([currentSizeValues[0], e.target.value]); changeWidth(e)}}/>
         <br></br><br></br></div> 
         }
         </>

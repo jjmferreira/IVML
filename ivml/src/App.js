@@ -10,16 +10,22 @@ import LegendaComponente from './components/LegendaComponente';
 import FiltroComponente from './components/FiltroComponente';
 import TituloComponente from './components/TituloComponente';
 import AcaoDadosComponente from './components/AcaoDadosComponente';
-import VarVisuaisImgComponente from './components/VarVisuaisImgComponente';
-import GraficoComponente from "./components/GraficoComponente";
-import DynamicForm from './components/DynamicForm';
-
+import ButComponente from './components/ButComponente';
+import ParameterComponente from './components/ParameterComponente';
+import ParameterBindingComponente from './components/ParameterBindingComponente.js';
 
 
 import './components/components.css';
 import FormComponent from './components/FormComponent';
 import AcaoDadosForm from './components/AcaoDadosForm';
 import InfoComponent from './components/InfoComponent';
+import DynamicForm from './components/DynamicForm';
+import GraficoComponente from "./components/GraficoComponente";
+import VarVisuaisImgComponente from './components/VarVisuaisImgComponente';
+import ParameterBindingForm from './components/ParameterBindingForm';
+
+
+
 
 
 
@@ -32,7 +38,8 @@ const flowKey = 'example-flow';
 
 
 const nodeTypes = { dadosUpdater: Dados, visUpdater: Vis, legendaUpdater: LegendaComponente, filtroUpdater: FiltroComponente, 
-  tituloUpdater: TituloComponente, acaoDadosUpdater: AcaoDadosComponente, imgUpdater: VarVisuaisImgComponente, graficoUpdater: GraficoComponente,};
+  tituloUpdater: TituloComponente, acaoDadosUpdater: AcaoDadosComponente, imgUpdater: VarVisuaisImgComponente, graficoUpdater: GraficoComponente, 
+  buttonUpdater: ButComponente, parameterUpdater: ParameterComponente, parameterBindingUpdater: ParameterBindingComponente};
 
 const initialNodes = [
   //{ id: 'node-1', type: 'visUpdater', position: { x: 0, y: 0 }, data: { name: 'Tratamento', datatype: 'Arbitrário'}},
@@ -58,33 +65,49 @@ function App() {
   const [graphType, setGraphType] = useState("");
   const [dataComponent, setDataComponent] = useState('');
 
-  //definir restrições de escolhar
-
+  //definir restrições de escolher
+  const [isAdd, setIsAdd] = useState(false)
 
   const [isOpen, setIsOpen] = useState(false);
   const [actionForm, setActionForm] = useState(false);
+  const [parameterForm, setParameterForm] = useState(false);
   const [newComponent, setnewComponent] = useState(false);
   const [infoForm, setInfoForm] = useState(false);
   const [nodeInfo, setNodeInfo] = useState([]);
+  //Ações e parâmetros
   const [allNodesName, setAllNodesName] = useState([]);
+  const [paramNodes, setParamNodes] = useState([]);
+
+
   const [parentNodeClicked, setParentNodeClicked] = useState("");
 
   const [edgeActionStart, setedgeActionStart] = useState("");
   const [edgeActionEnd, setedgeActionEnd] = useState("");
+
 
   //Counters
   const [visCounter, setVisCounter] = useState(0);
   const [legCounter, setLegCounter] = useState(0);
   const [filCounter, setFilCounter] = useState(0);
   const [titCounter, setTitCounter] = useState(0);
+  const [buttCounter, setButtCounter] = useState(0);
+  const [parameterCounter, setParameterCounter] = useState(0);
+
+
   const [nodeIDCounter, setNodeIDCounter] = useState(0);
   const [edgeIDCounter, setEdgeIDCounter] = useState(0);
 
   //VisCompSize passed on Data
-  const [newH, setH] = useState('');
-  const [newW, setW] = useState('');
+  const minSizeValue = 75;
+  const [newH, setH] = useState(minSizeValue);
+  const [newW, setW] = useState(minSizeValue);
 
 
+  //ParamterOptionsList
+  const [paramList, setParamList] = useState([]);
+
+  //icones açao de dados
+  const [actionIconType, setActionIconType] = useState("");
 
 
   //Save and restore - /Export and import
@@ -128,6 +151,8 @@ function App() {
         setLegCounter(flow.legCounter)
         setFilCounter(flow.filCounter)
         setTitCounter(flow.titCounter)
+        setButtCounter(flow.buttCounter)
+        setParameterCounter(flow.parameterCounter)
         setNodeIDCounter(flow.nodeIDCounter)
         setEdgeIDCounter(flow.edgeIDCounter)
       }
@@ -160,6 +185,8 @@ function App() {
         setLegCounter(flow.legCounter)
         setFilCounter(flow.filCounter)
         setTitCounter(flow.titCounter)
+        setButtCounter(flow.buttCounter)
+        setParameterCounter(flow.parameterCounter)
         setNodeIDCounter(flow.nodeIDCounter)
         setEdgeIDCounter(flow.edgeIDCounter)
 
@@ -202,9 +229,16 @@ function App() {
       case "tituloUpdater": setTitCounter(titCounter + 1);
       nodeCounter = "T" + titCounter;
       break;
+      case "buttonUpdater": setButtCounter(buttCounter + 1);
+      nodeCounter = "B" + buttCounter;
+      break;
+      case "parameterUpdater": setParameterCounter(buttCounter + 1);
+      nodeCounter = "P" + parameterCounter;
+      break;
       default: console.log("Yooo"); break;
     }
-    const nodeData = { name: newDataName, datatype: newDataType, dataExplain: newDataSpec, varName: varType, graphType: graphType, compCounter: nodeCounter, height: newH, width: newW};
+    const nodeData = { name: newDataName, datatype: newDataType, dataExplain: newDataSpec, varName: varType, graphType: graphType, compCounter: nodeCounter,
+     height: newH, width: newW, parameterOptions: paramList, actionResultType: actionIconType}; 
     let extentAtt = 'parent';
     if(parentNodeClicked.length === 0){
       extentAtt = ''
@@ -217,8 +251,9 @@ function App() {
     setDataComponent("");
     setParentNodeClicked("");
     setNodeIDCounter(nodeIDCounter + 1);
-    setH('');
-    setW('');
+    setH(minSizeValue);
+    setW(minSizeValue);
+    setIsAdd(false);
     if(edgeActionStart !== "" && edgeActionEnd !== ""){
       setEdges([...edges, { id: '' + edgeIDCounter + '', source: edgeActionStart, target: nodeid, type: 'straight', sourceHandle: 'a' } , 
       { id: '' + Math.random() + '', source: nodeid, target: edgeActionEnd,animated:true, type: 'straight', sourceHandle: 'b'}])
@@ -231,10 +266,10 @@ function App() {
   const updateNodeData = (updatableNode) => {
     nodes.filter((node) => {
       if(node.id === updatableNode.id){
-        if(newH !== ""){
+        if(newH !== minSizeValue){
           node.data.height = newH;
         }
-        if (newW !== ""){
+        if (newW !== minSizeValue){
           node.data.width = newW;
         } 
         
@@ -252,15 +287,17 @@ function App() {
     setnewComponent(false);
     setInfoForm(false);
     setActionForm(false);
+    setParameterForm(false)
     setParentNodeClicked("");
     setedgeActionEnd("");
     setedgeActionStart("");
+    setIsAdd(false);
   }
 
   const toggleCompPopup = () => {
     setIsOpen(true);
     setnewComponent(true);
-    setDataComponent("dadosUpdater")
+    setDataComponent("visUpdater")
   }
   
   
@@ -269,6 +306,15 @@ function App() {
     setActionForm(true)
     setAllNodesName(nodes.filter((node) => node.data.name))
     setDataComponent("acaoDadosUpdater")
+   }
+
+   const toggleParameterBindingPopup = () => {
+    setIsOpen(true);
+    setParameterForm(true)
+    setParamNodes(nodes.filter(node =>  node.type === "parameterUpdater"))
+    setAllNodesName(nodes.filter((node) => node.data.name))
+    console.log(paramNodes)
+    setDataComponent("parameterBindingUpdater")
    }
 
 
@@ -281,6 +327,7 @@ function App() {
    const addANewComponentToNode = (nodeId) =>{
     setParentNodeClicked(nodeId);
     setIsOpen(true);
+    setIsAdd(true)
     setnewComponent(true);
     setDataComponent("dadosUpdater")
    }
@@ -319,6 +366,10 @@ function App() {
       break;
       case "Titulo": dataComponent = "tituloUpdater"
       break;
+      case "Botão": dataComponent = "buttonUpdater"
+      break;
+      case "Parâmetro": dataComponent = "parameterUpdater"
+      break;
       case "Variáveis Visuais": dataComponent = "imgUpdater"
       break;
       case "Tipos de Gráficos": dataComponent = "graficoUpdater"
@@ -334,6 +385,7 @@ function App() {
  }
 
  const handleNameChange = (event) => {
+  console.log(event)
   if(event.target !== undefined){
     setDataName(event.target.value)
   }
@@ -351,10 +403,20 @@ const handleWidhtChange = (event) => {
   }
 }
 
+const handleActionIcon = (actionName) => {
+  switch(actionName){
+    case "Filtragem": setActionIconType("filtragem");
+    break;
+    case "Destaque": setActionIconType("destaque");
+    break;
+    default: setActionIconType("");
+  } 
+}
+
 const handleUpdate = () =>{
   updateNodeData(nodeInfo)
-  setH("");
-  setW("");
+  setH(minSizeValue);
+  setW(minSizeValue);
   setDataName("");
   closeWindow();
 }
@@ -376,6 +438,12 @@ const handleUpdate = () =>{
     return (<DynamicForm changeDataName={handleNameChange} changeHeight={handleHeightChange} changeWidth={handleWidhtChange}></DynamicForm>)
 
     case "filtroUpdater": 
+    return (<DynamicForm changeDataName={handleNameChange} changeHeight={handleHeightChange} changeWidth={handleWidhtChange}></DynamicForm>)
+
+    case "buttonUpdater": 
+    return (<DynamicForm changeDataName={handleNameChange} changeHeight={handleHeightChange} changeWidth={handleWidhtChange}></DynamicForm>)
+
+    case "parameterUpdater": 
     return (<DynamicForm changeDataName={handleNameChange} changeHeight={handleHeightChange} changeWidth={handleWidhtChange}></DynamicForm>)
 
     case "imgUpdater": 
@@ -408,7 +476,15 @@ const handleUpdate = () =>{
 const handleActionFinish = (endNodeID) => {
   setedgeActionEnd('' + endNodeID + '')
 }
-  
+
+
+const parameterOptionsList = (options) => {
+  console.log("Opçoes " + options)
+  setParamList([...paramList, options]);
+  console.log("Param List " + paramList)
+ 
+}
+
 
   return (
     <div style={{ height: 800 }}>
@@ -421,6 +497,11 @@ const handleActionFinish = (endNodeID) => {
       type="button"
       value="Criar Ação de dados!"
       onClick={toggleActionPopup}
+    />
+     <input
+      type="button"
+      value="Criar Parameter Binding!"
+      onClick={toggleParameterBindingPopup}
     />
     {!isOpen ? <ReactFlow
       nodes={nodes}
@@ -443,6 +524,7 @@ const handleActionFinish = (endNodeID) => {
       </div>
     </ReactFlow> : ""}
     {isOpen && newComponent ? <FormComponent
+      isAdd={isAdd}
       handleOptionSwitch={handleDataComponentChange}
       dataSwitch={infoDataSwitch(dataComponent)}
       createComp={() => createDataComp(parentNodeClicked)}
@@ -458,40 +540,24 @@ const handleActionFinish = (endNodeID) => {
     >
     </InfoComponent> : "" }
     {isOpen && actionForm ? <AcaoDadosForm
-      content={<>
-        <br></br> <br></br>
-        <br></br>
-        <b><label htmlFor="text">Componente de partida:</label></b>
-        <br></br> <br></br>
-        <select name="category" defaultValue={'DEFAULT'} onChange={event => handleActionStart(event.target.value)}>
-            <option value="DEFAULT" disabled>Escolhe o componente:</option>
-            {allNodesName.map((node) => (
-            <option key={node.id} value={node.id}>
-            {node.data.compCounter}              
-            </option>
-          ))}
-        </select>
-        <br></br> <br></br>
-        <br></br>
-        <b><label htmlFor="text">Componente de Chegada:</label></b>
-        <br></br> <br></br>
-        <select name="category" defaultValue={'DEFAULT'} onChange={event => handleActionFinish(event.target.value)}>
-        <option value="DEFAULT" disabled>Escolhe o componente:</option>
-            {allNodesName.map((node) => (
-            <option key={node.id} value={node.id}>
-              {node.data.compCounter}
-            </option>
-          ))}
-        </select>
-        <br></br> <br></br>
-        <br></br>
-        <b><label htmlFor="text">Nome dos Dados:</label></b>
-        <input id="text" type="text" onChange={(e) => setDataName(e.target.value)}/>
-        <br></br><br></br>
-        <button onClick={() => {createDataComp(parentNodeClicked)}}> Criar componente de dados!</button>
-      </>}    
+      handleActionStart={handleActionStart}
+      handleActionFinish={handleActionFinish} 
+      nodesName={allNodesName}
+      changeDataName={handleNameChange}
+      actionResultType={handleActionIcon}
+      createComp={() => createDataComp(parentNodeClicked)}  
       handleClose = {closeWindow}
     ></AcaoDadosForm> : "" }
+    {isOpen && parameterForm ? <ParameterBindingForm 
+    handleClose={closeWindow}
+    handleActionStart={handleActionStart}
+    handleActionFinish={handleActionFinish} 
+    changeDataName={handleNameChange}
+    newList={parameterOptionsList}
+    nodesName={allNodesName}
+    parameterNodes={paramNodes}
+    createComp={() => createDataComp(parentNodeClicked)}>
+    </ParameterBindingForm> :<></>}
     </div>
   );
 }

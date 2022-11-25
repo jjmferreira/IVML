@@ -12,30 +12,12 @@
     font-size: 12px;
   }
 
-.container{
-  position: absolute;
-  left: 75%;
-  height: 25%;
-  width: 25%;
-}
 
 .miniContainer{
   position: absolute;
-  right: 5%;
+  right: 5px;
 }
 
-.buttonSize {
-  padding: 1% 1%;
-  display: inline-block;
-  margin: 1% 10% 1%;
-  height: 50%;
-  width: 50%;
-}
-
-.t{
-  height: 100%;
-  width: 100%;
-}
 .miniButtonSize{
   padding: 5% 5%;
   text-align: center;
@@ -54,6 +36,31 @@
   background: #7b8080;
 }
 
+.button-node {
+  height: 50px;
+  width: 100px;
+  border: 1px solid rgb(0, 0, 0);
+  padding: 5px;
+  background: #a85b03;
+}
+
+.parameter-node{
+  height: 50px;
+  width: 100px;
+  border: 1px solid rgb(0, 0, 0);
+  padding: 5px;
+  background: #7b8080;
+}
+
+
+.parameterB-node {
+  height: 100px;
+  width: 200px;
+  border: 1px solid rgb(0, 0, 0);
+  padding: 10px;
+  background: #1f25255e;
+}
+
 .dados-node {
   height: 10px;
   border: 1px solid rgb(0, 0, 0);
@@ -65,11 +72,10 @@
 
 .titulo-node {
   height: 10px;
-  width: 50px;
   border: 1px solid rgb(0, 0, 0);
   padding: 5px;
   background: rgba(63, 59, 59, 0.733);
-  display:flex;
+  display:inline-flex;
   justify-content:space-between;
 }
 
@@ -81,6 +87,7 @@
 
 .text-margin{
   margin: 0px 20px 0% 0px;
+  align-self: center;
 }
 
 .acao-dados-node{
@@ -89,10 +96,20 @@
   border: 1px solid rgb(0, 0, 0);
   padding: 5px;
   background: #5e0499;
-  
 }
 
+.actionIconContainer{
+  width: 20px; 
+  height: 20px;
+  margin-top: 20px;
+  margin-left: 10px;
+}
 
+.actionIcon{
+  height: 100%;
+  width: 100%;
+
+}
 
 .var-node {
   height: 15px;
@@ -122,11 +139,64 @@
 }
 
 .corner-element {
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
   background: rgb(255, 172, 19);
   position: absolute;
-  top: 1;
-  right: 1;
+  top: 5px;
+  left: 5px;
   z-index: 1;
+  font-size: 12px;
+}
+
+.componentNameStyle{
+  position: absolute;
+  top: 3px;
+  left: 25px;
+  font-size: 12px;
+  height: 15px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.componentNameStyleWithoutCounter{
+  position: absolute;
+  top: 3px;
+  font-size: 12px;
+  height: 15px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.closeButton{
+  position: absolute;
+  right: 25px;
+}
+
+.closeButtonTop{
+  position: absolute;
+  right: 25px;
+  top: 25px
+}
+
+.editButton{
+  position: absolute;
+  bottom: 35px;
+}
+
+.t{
+  background-image: url('../imagens/Icones/Filtragem.PNG');
+background-repeat: no-repeat;
+height: 100%;
+width: 100%;
+
+}
+
+.t1{
+  width: 20px; 
+  height: 20px;
+  margin-top: 20px;
+  margin-left: 10px;
 }

@@ -14,8 +14,8 @@ function TituloComponente({data}) {
   }
 
   return (
-  <div className="titulo-node" style={sizeValues}>
-    <small><b>{data.name}</b></small>
+  <div className="titulo-node" >
+    <small className='text-margin'><b>{data.name}</b></small>
     <div className='miniContainer'>
     <button className='miniButtonSize iconSize' name="Remove" > <FaTrashAlt style={removeStyle} pointerEvents={'none'}/> </button>
     </div>
