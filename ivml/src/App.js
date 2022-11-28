@@ -226,9 +226,6 @@ function App() {
       case "filtroUpdater": setFilCounter(filCounter + 1);
       nodeCounter = "F" + filCounter;
       break;
-      case "tituloUpdater": setTitCounter(titCounter + 1);
-      nodeCounter = "T" + titCounter;
-      break;
       case "buttonUpdater": setButtCounter(buttCounter + 1);
       nodeCounter = "B" + buttCounter;
       break;
@@ -255,6 +252,7 @@ function App() {
     setW(minSizeValue);
     setIsAdd(false);
     if(edgeActionStart !== "" && edgeActionEnd !== ""){
+      console.log("Edge final " + edgeActionEnd)
       setEdges([...edges, { id: '' + edgeIDCounter + '', source: edgeActionStart, target: nodeid, type: 'straight', sourceHandle: 'a' } , 
       { id: '' + Math.random() + '', source: nodeid, target: edgeActionEnd,animated:true, type: 'straight', sourceHandle: 'b'}])
       setEdgeIDCounter(edgeIDCounter + 1);
@@ -304,8 +302,12 @@ function App() {
   const toggleActionPopup = () => {
     setIsOpen(true);
     setActionForm(true)
-    setAllNodesName(nodes.filter((node) => node.data.name))
+    setAllNodesName(nodes.filter((node) => (node.data.compCounter !== undefined || (node.parentNode !== "" && hasNick(node.parentNode) !== []))))
     setDataComponent("acaoDadosUpdater")
+   }
+
+   const hasNick = (nodeid) => {
+    (nodes.filter((node) => (nodeid) && node.data.compCounter !== undefined))
    }
 
    const toggleParameterBindingPopup = () => {
@@ -473,9 +475,12 @@ const handleUpdate = () =>{
   setedgeActionStart('' + startNodeID + '')
 }
 
-const handleActionFinish = (endNodeID) => {
+const handleActionFinish = (endNodeID, number) => {
   setedgeActionEnd('' + endNodeID + '')
+  console.log(number+ " Num")
 }
+
+
 
 
 const parameterOptionsList = (options) => {

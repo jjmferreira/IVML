@@ -1,5 +1,25 @@
 const AcaoDadosForm = ({handleActionStart, handleActionFinish, createComp, nodesName,handleClose, changeDataName, actionResultType}) => {
 
+
+
+  const aux = (curNode) => {
+    let nodeName = curNode.data.name;
+    if(curNode.data.compCounter !== undefined){
+      return curNode.data.compCounter;
+    } else{
+      let string = "";
+      nodesName.map((node) => {
+        if(node.id === curNode.parentNode){
+          //console.log(nodeName + "(" + node.data.compCounter + ")")
+          string = nodeName + "(" + node.data.compCounter + ")";
+          return string
+        }
+      })
+      return string;
+    }
+  }
+
+
     return (
       <div className="popup-box">
         <div className="box">
@@ -20,7 +40,7 @@ const AcaoDadosForm = ({handleActionStart, handleActionFinish, createComp, nodes
             <option value="DEFAULT" disabled>Escolhe o componente:</option>
             {nodesName.map((node) => (
             <option key={node.id} value={node.id}>
-            {node.data.compCounter}              
+            {aux(node)}              
             </option>
           ))}
         </select>
@@ -28,14 +48,15 @@ const AcaoDadosForm = ({handleActionStart, handleActionFinish, createComp, nodes
         <br></br>
         <b><label htmlFor="text">Componente de Chegada:</label></b>
         <br></br> <br></br>
-        <select name="category" defaultValue={'DEFAULT'} onChange={event => handleActionFinish(event.target.value)}>
+        <select name="category" defaultValue={'DEFAULT'} onChange={event => handleActionFinish(event.target.value, 0)}>
         <option value="DEFAULT" disabled>Escolhe o componente:</option>
             {nodesName.map((node) => (
             <option key={node.id} value={node.id}>
-              {node.data.compCounter}
+            {aux(node)}
             </option>
           ))}
         </select>
+        <br></br> <br></br>
         <br></br> <br></br>
         <br></br>
         <b><label htmlFor="text">Nome dos Dados:</label></b>

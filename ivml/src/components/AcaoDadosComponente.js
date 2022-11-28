@@ -28,7 +28,6 @@ function AcaoDadosComponente({data}) {
   }
   
   const actonType = () => {
-    console.log(data.actionResultType)
     switch(data.actionResultType){
       case "filtragem": return filtragem;
       case "destaque": return destaque;
@@ -49,7 +48,7 @@ function AcaoDadosComponente({data}) {
          <img className='actionIcon'src={actonType()}></img>
         </div>
         {<Handle type="target" position={Position.Left} style={handleStyle}/> }
-        {/*<Handle type="source" position={Position.Right} id="a" style={handleStyle} /> */}
+        {<Handle type="source" position={Position.Right} id="a" style={handleStyle} />}
 
     </div>
   );
