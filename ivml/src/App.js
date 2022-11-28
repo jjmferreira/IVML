@@ -484,10 +484,7 @@ const handleActionFinish = (endNodeID, number) => {
 
 
 const parameterOptionsList = (options) => {
-  console.log("Opçoes " + options)
-  setParamList([...paramList, options]);
-  console.log("Param List " + paramList)
- 
+  setParamList(options);
 }
 
 

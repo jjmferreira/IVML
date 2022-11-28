@@ -30,12 +30,10 @@ function Vis({data}) {
       {<Handle type="target" position={Position.Left} style={handleStyle}/>}
       <div className='componentNameStyle' style={adaptaptableWidth}>
         <b>{data.name}</b>
-        <div><ul>
-        {/*data.parameterOptions.current.map(option => <li key={keyCounter++}> {option} </li>)*/}
-        </ul>
-        </div>
-        
       </div>
+        <div><ul style={{paddingInlineStart: 15, fontSize: 10}}>
+            {data.parameterOptions.map((option, index) => (<li key={index}> {option} </li>))}
+        </ul></div>
       {<Handle type="source" position={Position.Right} id="a" style={handleStyle} /> }
 
     </div>

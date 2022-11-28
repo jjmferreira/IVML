@@ -1,4 +1,5 @@
-import { useState } from "react";
+import {useCallback, useState} from "react";
+import {applyEdgeChanges} from "react-flow-renderer";
 
 const ParameterBindingForm = ({handleActionStart, handleActionFinish, handleClose, changeDataName, createComp, newList, nodesName, parameterNodes}) => {
 
@@ -11,9 +12,9 @@ const [optionName, setOptionName] = useState("");
 const addOption = () => {
   if(optionName !== ""){
     setOptions([...options, optionName]);
+    console.log("Options " + [...options, optionName]);
+    newList([...options, optionName]);
   }
- 
-  
 }
 
   return (
@@ -26,7 +27,7 @@ const addOption = () => {
         <br></br><br></br></div>
         <div><b><label htmlFor="text">Nova opção:</label></b>
         <input id="text" type="text" onChange={(e) => setOptionName(e.target.value)}/>
-        <button onClick={addOption}> Adicionar!</button>    
+        <button onClick={addOption}> Adicionar!</button>
         <br></br><br></br>
         <b><label htmlFor="text">Parâmetro:</label></b>
         <br></br> <br></br>
@@ -56,7 +57,7 @@ const addOption = () => {
         <br></br><br></br>
         </div>
        
-        <button onClick={ () => {createComp(); newList(options)}}> Criar componente de dados!</button>    
+        <button onClick={ () => {createComp()}}> Criar componente de dados!</button>
       </div>
     </div>
   );
