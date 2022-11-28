@@ -334,7 +334,8 @@ function App() {
     setIsOpen(true);
     setParameterForm(true)
     setParamNodes(nodes.filter(node =>  node.type === "parameterUpdater"))
-    setAllNodesName(nodes.filter((node) => node.data.name))
+    //setAllNodesName(nodes.filter((node) => node.data.name))
+    setAllNodesName(nodes.filter((node) => (node.parentNode !== "" && hasNick(node.parentNode)) || node.data.compCounter !== undefined))
     setDataComponent("parameterBindingUpdater")
    }
 

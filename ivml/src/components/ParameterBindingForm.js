@@ -16,6 +16,23 @@ const addOption = () => {
   }
 }
 
+const aux = (curNode) => {
+  let nodeName = curNode.data.name;
+  if(curNode.data.compCounter !== undefined){
+    return curNode.data.compCounter;
+  } else{
+    let string = "";
+    nodesName.map((node) => {
+      if(node.id === curNode.parentNode){
+        //console.log(nodeName + "(" + node.data.compCounter + ")")
+        string = nodeName + "(" + node.data.compCounter + ")";
+        return string
+      }
+    })
+    return string;
+  }
+}
+
   return (
     <div className="popup-box">
       <div className="box">
@@ -46,7 +63,7 @@ const addOption = () => {
         <option value="DEFAULT" disabled>Escolhe o componente:</option>
             {nodesName.map((node) => (
             <option key={node.id} value={node.id}>
-              {node.data.compCounter}
+              {aux(node)}
             </option>
           ))}
         </select>
