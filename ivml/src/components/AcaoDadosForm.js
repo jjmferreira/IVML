@@ -1,6 +1,7 @@
+import { useState } from 'react';
+import Select from 'react-select'
+
 const AcaoDadosForm = ({handleActionStart, handleActionFinish, createComp, nodesName,handleClose, changeDataName, actionResultType}) => {
-
-
 
   const aux = (curNode) => {
     let nodeName = curNode.data.name;
@@ -19,9 +20,22 @@ const AcaoDadosForm = ({handleActionStart, handleActionFinish, createComp, nodes
     }
   }
 
+  const aux2 = () => {
+    let listOfNodeOptions = []
+    nodesName.map((node) => {
+      listOfNodeOptions.push({value: node.id, label: aux(node)})
+    })
+    return listOfNodeOptions;
+  }
+
+  const [nodeLabels, setNodeLabels] = useState(aux2())
+  const [selectEndPointNodes, setSelectEndPointNodes] = useState([]);
+
+  
+
 
     return (
-      <div className="popup-box">
+<div className="popup-box">
         <div className="box">
           <button onClick={handleClose}>x</button>
           <br></br> <br></br>

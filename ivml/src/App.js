@@ -23,6 +23,7 @@ import DynamicForm from './components/DynamicForm';
 import GraficoComponente from "./components/GraficoComponente";
 import VarVisuaisImgComponente from './components/VarVisuaisImgComponente';
 import ParameterBindingForm from './components/ParameterBindingForm';
+import { isGloballyWhitelisted } from '@vue/shared';
 
 
 
@@ -83,6 +84,9 @@ function App() {
 
   const [edgeActionStart, setedgeActionStart] = useState("");
   const [edgeActionEnd, setedgeActionEnd] = useState("");
+
+  const [edgeActionListEnd, setedgeActionListEnd] = useState([]);
+
 
 
   //Counters
@@ -215,7 +219,7 @@ function App() {
   const createDataComp = (parentNodeClicked) => {
     const nodeid = '' + nodeIDCounter + '';
     const nodeposition = { x: 0, y: 0 };
-    let nodeCounter;
+    let nodeCounter = undefined;
     switch(dataComponent){
       case "visUpdater": setVisCounter(visCounter + 1);
       nodeCounter = "V" + visCounter;
@@ -252,11 +256,20 @@ function App() {
     setW(minSizeValue);
     setIsAdd(false);
     if(edgeActionStart !== "" && edgeActionEnd !== ""){
-      console.log("Edge final " + edgeActionEnd)
       setEdges([...edges, { id: '' + edgeIDCounter + '', source: edgeActionStart, target: nodeid, type: 'straight', sourceHandle: 'a' } , 
       { id: '' + Math.random() + '', source: nodeid, target: edgeActionEnd,animated:true, type: 'straight', sourceHandle: 'b'}])
       setEdgeIDCounter(edgeIDCounter + 1);
     }
+/*    if(edgeActionStart !== "" && edgeActionListEnd.length != 0){
+      console.log("Edge final " + edgeActionEnd)
+      setEdges([...edges, { id: '' + edgeIDCounter + '', source: edgeActionStart, target: nodeid, type: 'straight', sourceHandle: 'a' }]);
+      setEdgeIDCounter(edgeIDCounter + 1);
+     for(let i = 0; i < edgeActionListEnd.length; i++){
+        setEdges([...edges, 
+        { id: '' + Math.random() + '', source: nodeid, target: edgeActionListEnd[i],animated:true, type: 'straight', sourceHandle: 'b'}])
+        setEdgeIDCounter(edgeIDCounter + 1);
+      }
+    }*/
     closeWindow();
   }
 
@@ -302,12 +315,19 @@ function App() {
   const toggleActionPopup = () => {
     setIsOpen(true);
     setActionForm(true)
-    setAllNodesName(nodes.filter((node) => (node.data.compCounter !== undefined || (node.parentNode !== "" && hasNick(node.parentNode) !== []))))
+    setAllNodesName(nodes.filter((node) => (node.parentNode !== "" && hasNick(node.parentNode)) || node.data.compCounter !== undefined))
     setDataComponent("acaoDadosUpdater")
    }
 
    const hasNick = (nodeid) => {
-    (nodes.filter((node) => (nodeid) && node.data.compCounter !== undefined))
+    let aux = false;
+    nodes.map((curNode) => {
+      if(curNode.data.compCounter !== undefined && curNode.id === nodeid){
+        aux = true
+        return;
+      }
+    })
+    return aux;
    }
 
    const toggleParameterBindingPopup = () => {
@@ -315,7 +335,6 @@ function App() {
     setParameterForm(true)
     setParamNodes(nodes.filter(node =>  node.type === "parameterUpdater"))
     setAllNodesName(nodes.filter((node) => node.data.name))
-    console.log(paramNodes)
     setDataComponent("parameterBindingUpdater")
    }
 
@@ -387,7 +406,6 @@ function App() {
  }
 
  const handleNameChange = (event) => {
-  console.log(event)
   if(event.target !== undefined){
     setDataName(event.target.value)
   }
@@ -477,9 +495,21 @@ const handleUpdate = () =>{
 
 const handleActionFinish = (endNodeID, number) => {
   setedgeActionEnd('' + endNodeID + '')
-  console.log(number+ " Num")
 }
 
+/** 
+ * const handleEndPointList = (list) => {
+  let y = [];
+  let x = [];
+  Object.keys(list).map((obj) => y.push(list[obj]));
+  for(let i = 0; i < y[0].length; i++){
+    console.log(y[0][i].value)
+    x.push('' + y[0][i].value + '')
+  }
+  console.log(x)
+  console.log(edgeActionListEnd)
+}
+*/
 
 
 
@@ -547,6 +577,7 @@ const parameterOptionsList = (options) => {
       nodesName={allNodesName}
       changeDataName={handleNameChange}
       actionResultType={handleActionIcon}
+      //endPointNodeList={handleEndPointList}
       createComp={() => createDataComp(parentNodeClicked)}  
       handleClose = {closeWindow}
     ></AcaoDadosForm> : "" }

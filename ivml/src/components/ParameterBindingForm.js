@@ -1,5 +1,4 @@
-import {useCallback, useState} from "react";
-import {applyEdgeChanges} from "react-flow-renderer";
+import {useState} from "react";
 
 const ParameterBindingForm = ({handleActionStart, handleActionFinish, handleClose, changeDataName, createComp, newList, nodesName, parameterNodes}) => {
 
