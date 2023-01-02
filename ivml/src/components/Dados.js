@@ -1,5 +1,5 @@
 import { Handle, Position } from 'react-flow-renderer';
-import {FaTrashAlt} from 'react-icons/fa'
+import {FaTrashAlt, FaInfo} from 'react-icons/fa'
 
 const handleStyle = { 
   height: '3px',
@@ -22,6 +22,7 @@ function Dados({data}) {
         {/*<small><small><small>Tipo dos dados: {data.datatype}</small></small></small> */}
         <div className='miniContainer'>
         <button className='miniButtonSize iconSize' name="Remove" > <FaTrashAlt style={removeStyle} pointerEvents={'none'}/> </button>
+        <button className='miniButtonSize iconSize' name="Info"> <FaInfo pointerEvents={'none'}/> </button>
         </div>
         {<Handle type="source" position={Position.Bottom} id="a" style={handleStyle} /> }
     </div>

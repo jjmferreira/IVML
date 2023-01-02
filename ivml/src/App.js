@@ -1,6 +1,8 @@
-import { useCallback, useState} from 'react';
-import ReactFlow, { addEdge, applyEdgeChanges, applyNodeChanges, ReactFlowProvider, useReactFlow} from 'react-flow-renderer';
-//import {Button} from '@mui/material';
+import { useCallback, useEffect, useState} from 'react';
+import ReactFlow, { addEdge, applyEdgeChanges, applyNodeChanges, ReactFlowProvider, useReactFlow, MarkerType} from 'react-flow-renderer';
+import '@reactflow/node-resizer/dist/style.css';
+
+
 
 //import { SmartBezierEdge } from '@tisoap/react-flow-smart-edge'
 
@@ -23,11 +25,11 @@ import DynamicForm from './components/DynamicForm';
 import GraficoComponente from "./components/GraficoComponente";
 import VarVisuaisImgComponente from './components/VarVisuaisImgComponente';
 import ParameterBindingForm from './components/ParameterBindingForm';
-import { isGloballyWhitelisted } from '@vue/shared';
 
 
 
-
+import clique from "./imagens/Icones/Clique.PNG"
+import hover from "./imagens/Icones/Hover.PNG"
 
 
 
@@ -85,9 +87,13 @@ function App() {
   const [edgeActionStart, setedgeActionStart] = useState("");
   const [edgeActionEnd, setedgeActionEnd] = useState("");
 
-  const [edgeActionListEnd, setedgeActionListEnd] = useState([]);
+  //interaction Icons set up source
+  const [currentSource, setCurrentSource] = useState("");
+  const [typeOfInterIcon, setTypeOfInterIcon] = useState("");
 
 
+  //No editado
+  const [currentEditedNode, setCurrentEditedNode] = useState([]);
 
   //Counters
   const [visCounter, setVisCounter] = useState(0);
@@ -233,13 +239,13 @@ function App() {
       case "buttonUpdater": setButtCounter(buttCounter + 1);
       nodeCounter = "B" + buttCounter;
       break;
-      case "parameterUpdater": setParameterCounter(buttCounter + 1);
+      case "parameterUpdater": setParameterCounter(parameterCounter + 1);
       nodeCounter = "P" + parameterCounter;
       break;
       default: console.log("Yooo"); break;
     }
     const nodeData = { name: newDataName, datatype: newDataType, dataExplain: newDataSpec, varName: varType, graphType: graphType, compCounter: nodeCounter,
-     height: newH, width: newW, parameterOptions: paramList, actionResultType: actionIconType}; 
+     height: newH, width: newW, parameterOptions: paramList, actionResultType: actionIconType, interIcon: ""}; 
     let extentAtt = 'parent';
     if(parentNodeClicked.length === 0){
       extentAtt = ''
@@ -256,43 +262,74 @@ function App() {
     setW(minSizeValue);
     setIsAdd(false);
     if(edgeActionStart !== "" && edgeActionEnd !== ""){
-      setEdges([...edges, { id: '' + edgeIDCounter + '', source: edgeActionStart, target: nodeid, type: 'straight', sourceHandle: 'a' } , 
-      { id: '' + Math.random() + '', source: nodeid, target: edgeActionEnd,animated:true, type: 'straight', sourceHandle: 'b'}])
+      setCurrentSource(edgeActionStart)
+      setEdges([...edges, { id: '' + edgeIDCounter + '', source: edgeActionStart, target: nodeid,label: 'dash/url', markerEnd: { type: MarkerType.Arrow }, type: 'straight', sourceHandle: 'a' } , 
+      { id: '' + Math.random() + '', source: nodeid, target: edgeActionEnd, markerEnd: { type: MarkerType.Arrow }, animated:true, type: 'straight', sourceHandle: 'b'}])
       setEdgeIDCounter(edgeIDCounter + 1);
     }
-/*    if(edgeActionStart !== "" && edgeActionListEnd.length != 0){
-      console.log("Edge final " + edgeActionEnd)
-      setEdges([...edges, { id: '' + edgeIDCounter + '', source: edgeActionStart, target: nodeid, type: 'straight', sourceHandle: 'a' }]);
-      setEdgeIDCounter(edgeIDCounter + 1);
-     for(let i = 0; i < edgeActionListEnd.length; i++){
-        setEdges([...edges, 
-        { id: '' + Math.random() + '', source: nodeid, target: edgeActionListEnd[i],animated:true, type: 'straight', sourceHandle: 'b'}])
-        setEdgeIDCounter(edgeIDCounter + 1);
-      }
-    }*/
     closeWindow();
   }
 
-  //UPDATE NODE INFO
-  const updateNodeData = (updatableNode) => {
-    nodes.filter((node) => {
-      if(node.id === updatableNode.id){
-        if(newH !== minSizeValue){
-          node.data.height = newH;
+  // Função para alterar os handles para as imagens
+  useEffect(() => {
+    if(currentSource !== ""){
+       
+      setNodes((nds) => 
+      nds.map((node) => {
+        if(node.id === currentSource) {
+          console.log("Entreii no if do use")
+          console.log("Current type: " + node.data.interIcon)
+          switch(typeOfInterIcon){
+            case "Clique" : node.data.interIcon = clique;
+            break;
+            case "Hover": node.data.interIcon = hover;
+            break;
+            default: node.data.interIcon = "";
+          }
+          setCurrentSource("");
+          setTypeOfInterIcon("");
         }
-        if (newW !== minSizeValue){
-          node.data.width = newW;
-        } 
-        
-        if (newDataName !== ""){
-          node.data.name = newDataName;
-        }
-      }
-    })
-    closeWindow();
-  }
+        return node;
+      })
+    ) 
+    }
 
- 
+    if(currentEditedNode.length !== 0){
+
+      setNodes((nds) => 
+      nds.map((node) => {
+        if(node.id === currentEditedNode.id){
+          if(newH !== minSizeValue){
+            node.data.height = newH;
+          }
+          if (newW !== minSizeValue){
+            node.data.width = newW;
+          } 
+          
+          if (newDataName !== ""){
+            node.data.name = newDataName;
+          }
+  
+          if(newDataType !== ""){
+            node.data.datatype = newDataType;
+          }
+
+          setCurrentEditedNode([]);
+          setH(minSizeValue);
+          setW(minSizeValue);
+          setDataName("");
+          setDataType("");
+
+        }
+
+        return node;
+      })
+     )
+    }
+    
+  }, [nodes, setNodes])
+
+
   const closeWindow = () => {
     setIsOpen(false);
     setnewComponent(false);
@@ -303,6 +340,7 @@ function App() {
     setedgeActionEnd("");
     setedgeActionStart("");
     setIsAdd(false);
+    setParamList([]);
   }
 
   const toggleCompPopup = () => {
@@ -358,11 +396,13 @@ function App() {
     setNodes(nodes.filter((node) => (node.id !== nodeId) && (node.parentNode !== nodeId)));
   }
 
-  const handleAddDataSpecs = (event) => {
-    let aux = event.target.value
-    setDataSpec([...newDataSpec, {aux}])
+  const handleAddDataSpecs = (dataList) => {
+    setDataSpec(dataList);
   }
 
+  const handleAddDataType = (dataType) => {
+    setDataType(dataType)
+  }
 
   const handleVarType = (event) => {
     switch(event.target.value){
@@ -435,17 +475,15 @@ const handleActionIcon = (actionName) => {
 }
 
 const handleUpdate = () =>{
-  updateNodeData(nodeInfo)
-  setH(minSizeValue);
-  setW(minSizeValue);
-  setDataName("");
+  //updateNodeData(nodeInfo)
+  setCurrentEditedNode(nodeInfo)
   closeWindow();
 }
 
  const infoDataSwitch = (dataComponent) => {
   switch(dataComponent){
     case "dadosUpdater": 
-    return (<><DynamicForm changeDataName={handleNameChange} dataExplain={true} specifyData={handleAddDataSpecs}></DynamicForm>
+    return (<><DynamicForm changeDataName={handleNameChange} dataExplain={true} handleSetDataType={handleAddDataType} dataSpecs={handleAddDataSpecs}></DynamicForm>
     </>
     )
 
@@ -498,21 +536,21 @@ const handleActionFinish = (endNodeID, number) => {
   setedgeActionEnd('' + endNodeID + '')
 }
 
-/** 
- * const handleEndPointList = (list) => {
-  let y = [];
-  let x = [];
-  Object.keys(list).map((obj) => y.push(list[obj]));
-  for(let i = 0; i < y[0].length; i++){
-    console.log(y[0][i].value)
-    x.push('' + y[0][i].value + '')
-  }
-  console.log(x)
-  console.log(edgeActionListEnd)
+
+const handleSetUpInterIcon = (iconType) => {
+  setTypeOfInterIcon(iconType)
 }
-*/
 
-
+const handleSetUpTypeAndSourceID = (icontype, actionDataID) => {
+  if(icontype !== ""){
+    setTypeOfInterIcon(icontype)
+    edges.map((edge) => {
+      if(edge.target === actionDataID){
+        setCurrentSource(edge.source)
+      }
+    })
+  }
+}
 
 const parameterOptionsList = (options) => {
   setParamList(options);
@@ -569,7 +607,10 @@ const parameterOptionsList = (options) => {
       resizeH={handleHeightChange}
       resizeW={handleWidhtChange}
       changeDataName={handleNameChange}
+      setUpInterTypeAndSourceID={handleSetUpTypeAndSourceID}
       handleCloseAndEdit={handleUpdate}
+      handleSetDataType={handleAddDataType} 
+      //dataSpecs={handleAddDataSpecs}
     >
     </InfoComponent> : "" }
     {isOpen && actionForm ? <AcaoDadosForm
@@ -578,6 +619,7 @@ const parameterOptionsList = (options) => {
       nodesName={allNodesName}
       changeDataName={handleNameChange}
       actionResultType={handleActionIcon}
+      handleSetupSourceIcon={handleSetUpInterIcon}
       //endPointNodeList={handleEndPointList}
       createComp={() => createDataComp(parentNodeClicked)}  
       handleClose = {closeWindow}
@@ -588,6 +630,7 @@ const parameterOptionsList = (options) => {
     handleActionFinish={handleActionFinish} 
     changeDataName={handleNameChange}
     newList={parameterOptionsList}
+    handleSetupSourceIcon={handleSetUpInterIcon}
     nodesName={allNodesName}
     parameterNodes={paramNodes}
     createComp={() => createDataComp(parentNodeClicked)}>

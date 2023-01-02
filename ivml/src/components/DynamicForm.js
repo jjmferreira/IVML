@@ -16,24 +16,38 @@ import tabela from "../imagens/Gráficos/Tabela.PNG"
 import texto from "../imagens/Gráficos/Texto.PNG"
 import { useState } from "react"
 
-const DynamicForm = ({changeDataName, changeVar, handleVarType, changeGraph, onTry, dataExplain, visComp, changeHeight,changeWidth, specifyData, needDimensions}) => {
+const DynamicForm = ({changeDataName, changeVar, handleVarType, changeGraph, onTry, dataExplain, changeHeight,changeWidth, handleSetDataType, dataSpecs}) => {
 
     const minSizes = 75;
+    let keyCounter = 0;
     const graficos = [area, barras, barrasEmp,barrasEmp100,dispersao, gant, hexabin, linha, mapa, mapaCalor, mapaCoropletico, multiLinhas, pontos, relogio, tabela, texto]
     const vars =["Cor", "Forma", "Tamanho"]
-    const [test, setTest] = useState("")
+    const [options, setOptions] = useState([]);
+    const [optionName, setOptionName] = useState("");
+    const [currentType, setCurrentType] = useState("")
     //index 0 - heigh; index 1 - width
     const [currentSizeValues, setCurrentSizeValues] = useState([minSizes, minSizes])
 
 
+    const addOption = () => {
+      if(optionName !== ""){
+        setOptions([...options, optionName]);
+        console.log("Options " + [...options, optionName]);
+        dataSpecs([...options, optionName]);
+      }
+    }
 
     const handleDataSpec = (datatype) => {
       switch(datatype){
-        case "Ranking": /*return(<><b><label htmlFor="text">Rankings a adicionar:</label></b>
-        <input id="text" type="text" onChange={(e) => specifyData(e)}/>
-        <button onClick={props.handleClose}>x</button>
-        <br></br><br></br></>)*/
-        break;
+        case "Ranking": return <><b><label htmlFor="text">Adicionar ranking:</label></b>
+        <input id="text" type="text" onChange={(e) => setOptionName(e.target.value)}/>
+        <button onClick={addOption}> Adicionar!</button>
+        {options.map(option => <li key={keyCounter++}> {option} </li>)}
+        <br></br><br></br></>
+        case "Categórico": return <><b><label htmlFor="text">Adicionar categoria:</label></b>
+        <input id="text" type="text" onChange={(e) => setOptionName(e.target.value)}/>
+        <button onClick={addOption}> Adicionar!</button>
+        <br></br><br></br></> 
         default: break;
       } 
     }
@@ -60,7 +74,7 @@ const DynamicForm = ({changeDataName, changeVar, handleVarType, changeGraph, onT
         <input id="text" type="text" onChange={(e) => changeDataName(e)}/>
         <br></br><br></br>
         <b><label htmlFor="text">Tipo dos Dados:</label></b>
-        <select name="category" defaultValue={'DEFAULT'} onChange={(e) => setTest(e.target.value)}>
+        <select name="category" defaultValue={'DEFAULT'} onChange={(e) => {handleSetDataType(e.target.value); setCurrentType(e.target.value)}}>
                     <option value="DEFAULT" disabled>Escolhe o componente:</option>
                     <option id="1">Binário</option>
                     <option id="2">Contínuo</option>
@@ -69,7 +83,7 @@ const DynamicForm = ({changeDataName, changeVar, handleVarType, changeGraph, onT
                     <option id="5">Ranking</option>
                     <option id="6">Categórico</option>            
                     </select>
-        <br></br><br></br>{handleDataSpec(test)} </div>  : 
+        <br></br><br></br>{handleDataSpec(currentType)} </div>  : 
         
         <div><b><label htmlFor="text">Título do componente:</label></b>
         <input id="text" type="text" onChange={(e) => changeDataName(e)}/>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Select from 'react-select'
 
-const AcaoDadosForm = ({handleActionStart, handleActionFinish, createComp, nodesName,handleClose, changeDataName, actionResultType}) => {
+const AcaoDadosForm = ({handleActionStart, handleActionFinish, createComp, nodesName,handleClose, changeDataName, actionResultType,handleSetupSourceIcon}) => {
 
   const aux = (curNode) => {
     let nodeName = curNode.data.name;
@@ -45,7 +45,7 @@ const AcaoDadosForm = ({handleActionStart, handleActionFinish, createComp, nodes
             <option value="DEFAULT" disabled>Escolhe o tipo:</option>
             <option>Filtragem</option>
             <option>Destaque</option>
-        </select>
+          </select>
         <br></br> <br></br>
         <br></br>
         <b><label htmlFor="text">Componente de partida:</label></b>
@@ -58,6 +58,14 @@ const AcaoDadosForm = ({handleActionStart, handleActionFinish, createComp, nodes
             </option>
           ))}
         </select>
+        <br></br> <br></br>
+        <b><label htmlFor="text">Tipo de interação:</label></b>
+          <br></br> <br></br>
+          <select name="category" defaultValue={'DEFAULT'} onChange={event => handleSetupSourceIcon(event.target.value)}>
+            <option value="DEFAULT" disabled>Escolhe o tipo:</option>
+            <option>Clique</option>
+            <option>Hover</option>
+          </select>
         <br></br> <br></br>
         <br></br>
         <b><label htmlFor="text">Componente de Chegada:</label></b>

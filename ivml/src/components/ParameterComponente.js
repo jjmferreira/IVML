@@ -1,9 +1,9 @@
 import {Handle, Position } from 'react-flow-renderer';
-import {FaPlus, FaInfo, FaTrashAlt} from 'react-icons/fa'
+import {FaInfo, FaTrashAlt} from 'react-icons/fa'
 
 const handleStyle = { 
-  height: '3px',
-  width:  '3px'
+  height: '1px',
+  width:  '1px'
 };
 
 const removeStyle = {
@@ -27,14 +27,16 @@ function ParameterComponente({data}) {
         <button className='miniButtonSize iconSize' name="Info"> <FaInfo pointerEvents={'none'}/> </button>
         <button  className='miniButtonSize iconSize' name="Remove" > <FaTrashAlt style={removeStyle} pointerEvents={'none'}/> </button>
         </div>
-        {<Handle type="target" position={Position.Left} style={handleStyle}/>}
-        <div>
+        {data.interIcon !== "" ? <Handle type="source" position={Position.Right} 
+        style={{backgroundImage: `url(${data.interIcon})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', width: '10px', height:'10px'}}/> 
+        :
+      <Handle type="source" position={Position.Right} id="b" style={handleStyle} /> }        <div>
           <div className='corner-element'>{data.compCounter}
           </div>
           <div className='componentNameStyle' style={adaptaptableWidth}>
             <b>{data.name}</b>
           </div>
-          {<Handle type="source" position={Position.Right} style={handleStyle}/>}
+          {<Handle type="target" position={Position.Left} id="a" style={handleStyle} /> }
         </div>
     </div>
   );

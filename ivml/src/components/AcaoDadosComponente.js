@@ -5,8 +5,8 @@ import filtragem from "../imagens/Icones/Filtragem.PNG"
 import destaque from "../imagens/Icones/Destaque.PNG"
 
 const handleStyle = { 
-  height: '3px',
-  width:  '3px'
+  height: '1px',
+  width:  '1px'
 };
 
 const removeStyle = {

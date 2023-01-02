@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-const ParameterBindingForm = ({handleActionStart, handleActionFinish, handleClose, changeDataName, createComp, newList, nodesName, parameterNodes}) => {
+const ParameterBindingForm = ({handleActionStart, handleActionFinish, handleClose, changeDataName, createComp, newList, nodesName, parameterNodes, handleSetupSourceIcon}) => {
 
 let keyCounter = 0;
 const [options, setOptions] = useState([]);
@@ -56,7 +56,14 @@ const aux = (curNode) => {
           ))}
         </select>
         <br></br> <br></br>
-        <br></br>
+        <b><label htmlFor="text">Tipo de interação:</label></b>
+          <br></br><br></br>
+          <select name="category" defaultValue={'DEFAULT'} onChange={event => handleSetupSourceIcon(event.target.value)}>
+            <option value="DEFAULT" disabled>Escolhe o tipo:</option>
+            <option>Clique</option>
+            <option>Hover</option>
+          </select>
+        <br></br><br></br>
         <b><label htmlFor="text">Componente de Chegada:</label></b>
         <br></br> <br></br>
         <select name="category" defaultValue={'DEFAULT'} onChange={event => handleActionFinish(event.target.value)}>
