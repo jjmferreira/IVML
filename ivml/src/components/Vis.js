@@ -1,7 +1,12 @@
-import {Handle, Position } from 'react-flow-renderer';
+//import {Handle, Position } from 'react-flow-renderer';
 import {FaPlus, FaInfo, FaTrashAlt} from 'react-icons/fa'
-//import { NodeResizer, NodeResizeControl } from '@reactflow/node-resizer';
-//import '@reactflow/node-resizer/dist/style.css';
+import '@reactflow/node-resizer/dist/style.css';
+import { memo, FC } from 'react';
+import { Handle, Position, NodeProps } from 'react-flow-renderer';
+
+import { NodeResizer } from '@reactflow/node-resizer';
+
+import '@reactflow/node-resizer/dist/style.css'
 
 
 const handleStyle = { 
@@ -13,7 +18,7 @@ const removeStyle = {
   color: 'red'
 }
 
-const Vis = ({data}) => {
+const Vis = ({data, selected}) => {
 
   const sizeValues = {
     height: '' + data.height + 'px',
@@ -46,4 +51,4 @@ const Vis = ({data}) => {
     
   );
   }
-export default Vis;
+export default memo(Vis);

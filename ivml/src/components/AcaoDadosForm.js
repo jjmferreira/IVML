@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import Select from 'react-select'
 
-const AcaoDadosForm = ({handleActionStart, handleActionFinish, createComp, nodesName,handleClose, changeDataName, actionResultType,handleSetupSourceIcon}) => {
+const AcaoDadosForm = ({handleActionStart, handleActionFinish, createComp, nodesName,handleClose, changeDataName, actionResultType,handleSetupSourceIcon, listTargets}) => {
+
+  let keyCounter = 0;
 
   const aux = (curNode) => {
     let nodeName = curNode.data.name;
@@ -20,19 +21,16 @@ const AcaoDadosForm = ({handleActionStart, handleActionFinish, createComp, nodes
     }
   }
 
-  const aux2 = () => {
-    let listOfNodeOptions = []
-    nodesName.map((node) => {
-      listOfNodeOptions.push({value: node.id, label: aux(node)})
-    })
-    return listOfNodeOptions;
-  }
 
-  const [nodeLabels, setNodeLabels] = useState(aux2())
-  const [selectEndPointNodes, setSelectEndPointNodes] = useState([]);
+  const [targetComponents, setTargetComponents] = useState([]);
 
   
-
+  const addTargetComponent = (targetID) =>{
+    if(!targetComponents.includes(targetID)){
+      setTargetComponents([...targetComponents, targetID])
+      listTargets([...targetComponents, targetID])
+    }
+  }
 
     return (
 <div className="popup-box">
@@ -70,7 +68,7 @@ const AcaoDadosForm = ({handleActionStart, handleActionFinish, createComp, nodes
         <br></br>
         <b><label htmlFor="text">Componente de Chegada:</label></b>
         <br></br> <br></br>
-        <select name="category" defaultValue={'DEFAULT'} onChange={event => handleActionFinish(event.target.value, 0)}>
+        <select name="category" defaultValue={'DEFAULT'} onChange={event => {addTargetComponent(event.target.value)}}>
         <option value="DEFAULT" disabled>Escolhe o componente:</option>
             {nodesName.map((node) => (
             <option key={node.id} value={node.id}>
@@ -78,6 +76,9 @@ const AcaoDadosForm = ({handleActionStart, handleActionFinish, createComp, nodes
             </option>
           ))}
         </select>
+        <ul>
+        {targetComponents.map(targetC => <li key={keyCounter++}> {targetC} </li>)}
+        </ul>
         <br></br> <br></br>
         <br></br> <br></br>
         <br></br>

@@ -15,7 +15,13 @@ import relogio from "../imagens/Gráficos/Relógio.PNG"
 import tabela from "../imagens/Gráficos/Tabela.PNG"
 import texto from "../imagens/Gráficos/Texto.PNG"
 
+import {FaTrashAlt} from 'react-icons/fa'
+
+
 function GraficoComponente({data}) {
+  const removeStyle = {
+    color: 'red'
+  }
 
     const switchVariable = () => {
         switch(data.graphType){
@@ -41,6 +47,7 @@ function GraficoComponente({data}) {
 <div >
       <div>
         {switchVariable()}
+        <button className='miniButtonSize1 miniIconSize' name="Remove" > <FaTrashAlt style={removeStyle} pointerEvents={'none'}/> </button>
       </div>
     </div>
   );

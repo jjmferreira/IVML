@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState} from 'react';
-import ReactFlow, { addEdge, applyEdgeChanges, applyNodeChanges, ReactFlowProvider, useReactFlow, MarkerType} from 'react-flow-renderer';
+import ReactFlow,{ useKeyPress, addEdge, applyEdgeChanges, applyNodeChanges, ReactFlowProvider, useReactFlow, MarkerType} from 'react-flow-renderer';
 import '@reactflow/node-resizer/dist/style.css';
 
 
@@ -113,8 +113,9 @@ function App() {
   const [newW, setW] = useState(minSizeValue);
 
 
-  //ParamterOptionsList
+  //ParamterOptionsList e Action Edge Targets
   const [paramList, setParamList] = useState([]);
+  const [targetList, setTargetList] = useState([]);
 
   //icones açao de dados
   const [actionIconType, setActionIconType] = useState("");
@@ -132,7 +133,20 @@ function App() {
     }
   }, [rfInstance,visCounter, legCounter, filCounter,titCounter,nodeIDCounter, edgeIDCounter]);
 
+  const spacePressed = useKeyPress('Delete');
 
+//delete usando o delete
+  useEffect(() => {
+    console.log('space pressed', spacePressed);
+    if(spacePressed){
+      nodes.map((node) => {
+        if(node.selected === true){
+          removeComponent(node.id)
+        }
+      })
+    }
+
+  }, [spacePressed]);
 
   const exportJSON = () => {
     const flow = rfInstance.toObject();
@@ -250,7 +264,7 @@ function App() {
     if(parentNodeClicked.length === 0){
       extentAtt = ''
     }
-    setNodes([...nodes, { id: nodeid, type: dataComponent, position:nodeposition, data: nodeData, parentNode: parentNodeClicked, extent:extentAtt}])
+    setNodes([...nodes, { id: nodeid, type: dataComponent, position:nodeposition, data: nodeData, style: { background: '#fff', border: '1px solid black', borderRadius: 15, fontSize: 12} , parentNode: parentNodeClicked, extent:extentAtt}])
     setDataName("");
     setDataType("");
     setDataSpec([]);
@@ -261,11 +275,20 @@ function App() {
     setH(minSizeValue);
     setW(minSizeValue);
     setIsAdd(false);
-    if(edgeActionStart !== "" && edgeActionEnd !== ""){
+    if(edgeActionStart !== "" && targetList !== []){
       setCurrentSource(edgeActionStart)
-      setEdges([...edges, { id: '' + edgeIDCounter + '', source: edgeActionStart, target: nodeid,label: 'dash/url', markerEnd: { type: MarkerType.Arrow }, type: 'straight', sourceHandle: 'a' } , 
-      { id: '' + Math.random() + '', source: nodeid, target: edgeActionEnd, markerEnd: { type: MarkerType.Arrow }, animated:true, type: 'straight', sourceHandle: 'b'}])
-      setEdgeIDCounter(edgeIDCounter + 1);
+      let listOfTargetEdges = [];
+      console.log(edgeIDCounter)
+      let edgeCounter = edgeIDCounter +1;
+      console.log(edgeCounter)
+      targetList.map( tcomp => {
+        listOfTargetEdges = [...listOfTargetEdges, { id: '' + edgeCounter + '', source: nodeid, target: tcomp, markerEnd: { type: MarkerType.Arrow }, animated:true, type: 'straight', sourceHandle: 'b'}]
+        edgeCounter += 1;
+      })
+      setEdges([...edges, 
+      { id: '' + edgeCounter + '', source: edgeActionStart, target: nodeid,label: 'dash/url', markerEnd: { type: MarkerType.Arrow }, type: 'straight', sourceHandle: 'a' } , 
+      ...listOfTargetEdges])
+      setEdgeIDCounter(edgeCounter)
     }
     closeWindow();
   }
@@ -277,8 +300,6 @@ function App() {
       setNodes((nds) => 
       nds.map((node) => {
         if(node.id === currentSource) {
-          console.log("Entreii no if do use")
-          console.log("Current type: " + node.data.interIcon)
           switch(typeOfInterIcon){
             case "Clique" : node.data.interIcon = clique;
             break;
@@ -372,7 +393,6 @@ function App() {
     setIsOpen(true);
     setParameterForm(true)
     setParamNodes(nodes.filter(node =>  node.type === "parameterUpdater"))
-    //setAllNodesName(nodes.filter((node) => node.data.name))
     setAllNodesName(nodes.filter((node) => (node.parentNode !== "" && hasNick(node.parentNode)) || node.data.compCounter !== undefined))
     setDataComponent("parameterBindingUpdater")
    }
@@ -475,7 +495,6 @@ const handleActionIcon = (actionName) => {
 }
 
 const handleUpdate = () =>{
-  //updateNodeData(nodeInfo)
   setCurrentEditedNode(nodeInfo)
   closeWindow();
 }
@@ -516,6 +535,7 @@ const handleUpdate = () =>{
  }
  
  const iconsSetUp = (click, node) => {
+  console.log(node)
   let buttonName = click.target.name;
     switch(buttonName){
       case "Info": showInfoPopUp(node);
@@ -534,6 +554,11 @@ const handleUpdate = () =>{
 
 const handleActionFinish = (endNodeID, number) => {
   setedgeActionEnd('' + endNodeID + '')
+}
+
+
+const handleEndPointList = (targets) => {
+  setTargetList(targets)
 }
 
 
@@ -620,7 +645,7 @@ const parameterOptionsList = (options) => {
       changeDataName={handleNameChange}
       actionResultType={handleActionIcon}
       handleSetupSourceIcon={handleSetUpInterIcon}
-      //endPointNodeList={handleEndPointList}
+      listTargets={handleEndPointList}
       createComp={() => createDataComp(parentNodeClicked)}  
       handleClose = {closeWindow}
     ></AcaoDadosForm> : "" }

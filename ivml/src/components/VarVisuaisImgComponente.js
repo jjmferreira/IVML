@@ -1,12 +1,19 @@
 import cor from "../imagens/Cor.PNG"
 import tamanho from "../imagens/Tamanho.PNG"
 import forma from "../imagens/Forma.PNG"
+import {FaTrashAlt} from 'react-icons/fa'
+
+
 
 
 
 
 
 function VarVisuaisImgComponente({data}) {
+
+  const removeStyle = {
+    color: 'red'
+  }
 
   const switchVariable = () => {
     switch(data.varName){
@@ -20,6 +27,7 @@ function VarVisuaisImgComponente({data}) {
     <div >
       <div>
         {switchVariable()}
+        <button className='miniButtonSize1 miniIconSize' name="Remove" > <FaTrashAlt style={removeStyle} pointerEvents={'none'}/> </button>
       </div>
     </div>
   );

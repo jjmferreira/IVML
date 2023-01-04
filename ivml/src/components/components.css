@@ -24,6 +24,15 @@
   display: block;
 }
 
+.miniButtonSize1{
+  padding: .1% .1%;
+  text-align: center;
+  display: block;
+}
+
+.miniIconSize {font-size: 4.5px;}
+
+
 
 .iconSize {font-size: 7px;}
 
@@ -114,12 +123,13 @@
 .var-node {
   height: 15px;
   width: 20px;
-  padding: 5px;
+  display: block;
 }
 .graph-node {
   height: 30px;
   width: 40px;
   padding: 5px;
+  display: block;
 }
 
 .wrapper {
