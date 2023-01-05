@@ -14,11 +14,11 @@ import pontos from "../imagens/Gráficos/Pontos.PNG"
 import relogio from "../imagens/Gráficos/Relógio.PNG"
 import tabela from "../imagens/Gráficos/Tabela.PNG"
 import texto from "../imagens/Gráficos/Texto.PNG"
+import {NodeToolbar, Position} from "reactflow";
+import {FaInfo, FaPlus, FaTrashAlt} from "react-icons/fa";
+import {NodeResizer} from "@reactflow/node-resizer";
 
-import {FaTrashAlt} from 'react-icons/fa'
-
-
-function GraficoComponente({data}) {
+function GraficoComponente({data, selected}) {
   const removeStyle = {
     color: 'red'
   }
@@ -46,6 +46,9 @@ function GraficoComponente({data}) {
   return (
 <div >
       <div>
+          <NodeToolbar className="node-toolbar" isVisible={selected} position={Position.Top}>
+              <button  name="Remove" > <FaTrashAlt style={{color: 'red'}} pointerEvents={'none'}/> Remover</button>
+          </NodeToolbar>
         {switchVariable()}
         <button className='miniButtonSize1 miniIconSize' name="Remove" > <FaTrashAlt style={removeStyle} pointerEvents={'none'}/> </button>
       </div>

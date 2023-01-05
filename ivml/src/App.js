@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState} from 'react';
-import ReactFlow,{ useKeyPress, addEdge, applyEdgeChanges, applyNodeChanges, ReactFlowProvider, useReactFlow, MarkerType} from 'react-flow-renderer';
-import '@reactflow/node-resizer/dist/style.css';
+import React, {useCallback, useEffect, useState} from 'react';
+import ReactFlow, { SmoothStepEdge, addEdge, applyEdgeChanges, applyNodeChanges,
+  ReactFlowProvider, useReactFlow, MarkerType} from 'reactflow';
+import { SmartStepEdge } from '@tisoap/react-flow-smart-edge';
+//import '@reactflow/node-resizer/dist/style.css';
+import 'reactflow/dist/style.css';
 
-
-
-//import { SmartBezierEdge } from '@tisoap/react-flow-smart-edge'
 
 import Dados from './components/Dados';
 import Vis from './components/Vis';
@@ -39,6 +39,10 @@ const rfStyle = {
 
 const flowKey = 'example-flow';
 
+const edgeTypes = {
+  default: SmartStepEdge,
+  straight: SmartStepEdge //backwards compatibility for previous dashboards
+}
 
 const nodeTypes = { dadosUpdater: Dados, visUpdater: Vis, legendaUpdater: LegendaComponente, filtroUpdater: FiltroComponente, 
   tituloUpdater: TituloComponente, acaoDadosUpdater: AcaoDadosComponente, imgUpdater: VarVisuaisImgComponente, graficoUpdater: GraficoComponente, 
@@ -133,20 +137,7 @@ function App() {
     }
   }, [rfInstance,visCounter, legCounter, filCounter,titCounter,nodeIDCounter, edgeIDCounter]);
 
-  const spacePressed = useKeyPress('Delete');
 
-//delete usando o delete
-  useEffect(() => {
-    console.log('space pressed', spacePressed);
-    if(spacePressed){
-      nodes.map((node) => {
-        if(node.selected === true){
-          removeComponent(node.id)
-        }
-      })
-    }
-
-  }, [spacePressed]);
 
   const exportJSON = () => {
     const flow = rfInstance.toObject();
@@ -165,62 +156,50 @@ function App() {
   const onRestore = useCallback(() => {
     const restoreFlow = async () => {
       const flow = JSON.parse(localStorage.getItem(flowKey));
-
-      if (flow) {
-        const { x = 0, y = 0, zoom = 1 } = flow.viewport;
-        setNodes(flow.nodes || []);
-        setEdges(flow.edges || []);
-        setViewport({ x, y, zoom });
-        setVisCounter(flow.visCounter)
-        setLegCounter(flow.legCounter)
-        setFilCounter(flow.filCounter)
-        setTitCounter(flow.titCounter)
-        setButtCounter(flow.buttCounter)
-        setParameterCounter(flow.parameterCounter)
-        setNodeIDCounter(flow.nodeIDCounter)
-        setEdgeIDCounter(flow.edgeIDCounter)
-      }
+      setCounters(flow);
     };
 
     restoreFlow();
   }, [setNodes, setViewport]);
 
-  
-  
-  
+
+
+
   const chooseFile = (event) => {
     const fileReader = new FileReader();
-      fileReader.readAsText(event.target.files[0], "UTF-8");
-      fileReader.onload = e => {
-        importJSON(e.target.result)
-      };
+    fileReader.readAsText(event.target.files[0], "UTF-8");
+    fileReader.onload = e => {
+      importJSON(e.target.result)
+    };
   }
-  
+
   const importJSON = useCallback((file) => {
     const restoreFlow = async () => {
       const flow = JSON.parse(file);
-  
-      if (flow) {
-        const { x = 0, y = 0, zoom = 1 } = flow.viewport;
-        setNodes(flow.nodes || []);
-        setEdges(flow.edges || []);
-        setViewport({ x, y, zoom });
-        setVisCounter(flow.visCounter)
-        setLegCounter(flow.legCounter)
-        setFilCounter(flow.filCounter)
-        setTitCounter(flow.titCounter)
-        setButtCounter(flow.buttCounter)
-        setParameterCounter(flow.parameterCounter)
-        setNodeIDCounter(flow.nodeIDCounter)
-        setEdgeIDCounter(flow.edgeIDCounter)
+      setCounters(flow);
+
+    };
+
+    restoreFlow();
+  }, [setNodes, setViewport]);
+
+  function setCounters(flow){
+    if (flow) {
+      const { x = 0, y = 0, zoom = 1 } = flow.viewport;
+      setNodes(flow.nodes || []);
+      setEdges(flow.edges || []);
+      setViewport({ x, y, zoom });
+      setVisCounter(flow.visCounter)
+      setLegCounter(flow.legCounter)
+      setFilCounter(flow.filCounter)
+      setTitCounter(flow.titCounter)
+      setButtCounter(flow.buttCounter)
+      setParameterCounter(flow.parameterCounter)
+      setNodeIDCounter(flow.nodeIDCounter)
+      setEdgeIDCounter(flow.edgeIDCounter)
 
       }
     };
-  
-    restoreFlow();
-  }, [setNodes, setViewport]);
-    
- 
 
 
   const onNodesChange = useCallback(
@@ -264,7 +243,7 @@ function App() {
     if(parentNodeClicked.length === 0){
       extentAtt = ''
     }
-    setNodes([...nodes, { id: nodeid, type: dataComponent, position:nodeposition, data: nodeData, style: { background: '#fff', border: '1px solid black', borderRadius: 15, fontSize: 12} , parentNode: parentNodeClicked, extent:extentAtt}])
+    setNodes([...nodes, { id: nodeid, type: dataComponent, position:nodeposition, data: nodeData, parentNode: parentNodeClicked, extent:extentAtt}])
     setDataName("");
     setDataType("");
     setDataSpec([]);
@@ -282,11 +261,11 @@ function App() {
       let edgeCounter = edgeIDCounter +1;
       console.log(edgeCounter)
       targetList.map( tcomp => {
-        listOfTargetEdges = [...listOfTargetEdges, { id: '' + edgeCounter + '', source: nodeid, target: tcomp, markerEnd: { type: MarkerType.Arrow }, animated:true, type: 'straight', sourceHandle: 'b'}]
+        listOfTargetEdges = [...listOfTargetEdges, { id: '' + edgeCounter + '', source: nodeid, target: tcomp, markerEnd: { type: MarkerType.Arrow }, animated:true, sourceHandle: 'b'}]
         edgeCounter += 1;
       })
-      setEdges([...edges, 
-      { id: '' + edgeCounter + '', source: edgeActionStart, target: nodeid,label: 'dash/url', markerEnd: { type: MarkerType.Arrow }, type: 'straight', sourceHandle: 'a' } , 
+      setEdges([...edges,
+      { id: '' + edgeCounter + '', source: edgeActionStart, target: nodeid,label: 'dash/url', markerEnd: { type: MarkerType.Arrow }, sourceHandle: 'a' } ,
       ...listOfTargetEdges])
       setEdgeIDCounter(edgeCounter)
     }
@@ -535,7 +514,6 @@ const handleUpdate = () =>{
  }
  
  const iconsSetUp = (click, node) => {
-  console.log(node)
   let buttonName = click.target.name;
     switch(buttonName){
       case "Info": showInfoPopUp(node);
@@ -602,6 +580,7 @@ const parameterOptionsList = (options) => {
     {!isOpen ? <ReactFlow
       nodes={nodes}
       edges={edges}
+      edgeTypes={edgeTypes}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
@@ -610,9 +589,9 @@ const parameterOptionsList = (options) => {
       fitView
       style={rfStyle}    
       onInit={setRfInstance}
-
-    > 
-    <div className="save__controls">
+      deleteKeyCode={'Delete'}
+    >
+      <div className="save__controls">
         <button onClick={onSave}>Guardar</button>
         <button onClick={onRestore}>Restaurar</button>
         <button onClick={exportJSON}>Exportar Dashboard</button>
@@ -620,12 +599,12 @@ const parameterOptionsList = (options) => {
       </div>
     </ReactFlow> : ""}
     {isOpen && newComponent ? <FormComponent
-      isAdd={isAdd}
-      handleOptionSwitch={handleDataComponentChange}
-      dataSwitch={infoDataSwitch(dataComponent)}
-      createComp={() => createDataComp(parentNodeClicked)}
-      handleClose = {closeWindow}
-    ></FormComponent> : "" }
+    isAdd={isAdd}
+    handleOptionSwitch={handleDataComponentChange}
+    dataSwitch={infoDataSwitch(dataComponent)}
+    createComp={() => createDataComp(parentNodeClicked)}
+    handleClose = {closeWindow}
+    /> : "" }
     {isOpen && infoForm ? <InfoComponent
       node={nodeInfo}
       handleClose = {closeWindow}

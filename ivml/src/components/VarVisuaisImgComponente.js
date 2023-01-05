@@ -1,19 +1,15 @@
 import cor from "../imagens/Cor.PNG"
 import tamanho from "../imagens/Tamanho.PNG"
 import forma from "../imagens/Forma.PNG"
-import {FaTrashAlt} from 'react-icons/fa'
+import {NodeToolbar, Position} from "reactflow";
+import {FaInfo, FaPlus, FaTrashAlt} from "react-icons/fa";
+import {NodeResizer} from "@reactflow/node-resizer";
 
 
 
 
 
-
-
-function VarVisuaisImgComponente({data}) {
-
-  const removeStyle = {
-    color: 'red'
-  }
+function VarVisuaisImgComponente({data, selected}) {
 
   const switchVariable = () => {
     switch(data.varName){
@@ -26,8 +22,10 @@ function VarVisuaisImgComponente({data}) {
   return (
     <div >
       <div>
+        <NodeToolbar className="node-toolbar" isVisible={selected} position={Position.Top}>
+          <button  name="Remove" > <FaTrashAlt style={{color: 'red'}} pointerEvents={'none'}/> Remover</button>
+        </NodeToolbar>
         {switchVariable()}
-        <button className='miniButtonSize1 miniIconSize' name="Remove" > <FaTrashAlt style={removeStyle} pointerEvents={'none'}/> </button>
       </div>
     </div>
   );

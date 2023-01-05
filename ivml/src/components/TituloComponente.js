@@ -1,11 +1,13 @@
 import {FaTrashAlt} from 'react-icons/fa'
+import {NodeToolbar, Position} from "reactflow";
+import {NodeResizer} from "@reactflow/node-resizer";
 
 const removeStyle = {
   color: 'red'
 }
 
 
-function TituloComponente({data}) {
+function TituloComponente({data, selected}) {
 
   
   const sizeValues = {
@@ -16,9 +18,10 @@ function TituloComponente({data}) {
   return (
   <div className="titulo-node" >
     <small className='text-margin'><b>{data.name}</b></small>
-    <div className='miniContainer'>
-    <button className='miniButtonSize iconSize' name="Remove" > <FaTrashAlt style={removeStyle} pointerEvents={'none'}/> </button>
-    </div>
+    <NodeToolbar className="node-toolbar" isVisible={selected} position={Position.Top}>
+      <button  name="Remove" > <FaTrashAlt style={{color: 'red'}} pointerEvents={'none'}/> Remover</button>
+    </NodeToolbar>
+    <NodeResizer color="#307DBB" isVisible={selected} minWidth={50} minHeight={25} />
   </div>
   );
 }

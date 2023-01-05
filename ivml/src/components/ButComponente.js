@@ -1,5 +1,6 @@
-import {Handle, Position } from 'react-flow-renderer';
-import {FaInfo, FaTrashAlt} from 'react-icons/fa'
+import {Handle, NodeToolbar, Position} from 'reactflow';
+import {FaInfo, FaPlus, FaTrashAlt} from 'react-icons/fa'
+import {NodeResizer} from "@reactflow/node-resizer";
 
 
 const handleStyle = { 
@@ -11,7 +12,7 @@ const removeStyle = {
   color: 'red',
 }
 
-function ButComponente({data}) {
+function ButComponente({data, selected}) {
   const sizeValues = {
     height: '' + data.height + 'px',
     width: '' + data.width + 'px'
@@ -23,11 +24,12 @@ function ButComponente({data}) {
   
 
   return (
-    <div className="button-node" style={sizeValues}>
-        <div className='miniContainer'>
-        <button className='miniButtonSize iconSize' name="Info"> <FaInfo pointerEvents={'none'}/> </button>
-        <button  className='miniButtonSize iconSize' name="Remove" > <FaTrashAlt style={removeStyle} pointerEvents={'none'}/> </button>
-        </div>
+    <div className="button-node">
+        <NodeToolbar className="node-toolbar" isVisible={selected} position={Position.Top}>
+            <button  name="Info"> <FaInfo pointerEvents={'none'}/> Info</button>
+            <button  name="Remove" > <FaTrashAlt style={{color: 'red'}} pointerEvents={'none'}/> Remover</button>
+        </NodeToolbar>
+        <NodeResizer color="#307DBB" style={sizeValues} isVisible={selected} minWidth={50} minHeight={25} />
         {data.interIcon !== "" ? <Handle type="source" position={Position.Right} 
         style={{backgroundImage: `url(${data.interIcon})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', width: '10px', height:'10px'}}/> 
         :

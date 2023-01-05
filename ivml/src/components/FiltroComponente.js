@@ -1,5 +1,6 @@
-import {Handle, Position } from 'react-flow-renderer';
+import {Handle, NodeToolbar, Position} from 'reactflow';
 import {FaPlus, FaInfo, FaTrashAlt} from 'react-icons/fa'
+import {NodeResizer} from "@reactflow/node-resizer";
 
 const handleStyle = { 
   height: '1px',
@@ -11,7 +12,7 @@ const removeStyle = {
   color: 'red'
 }
 
-function FiltroComponente({data}) {
+function FiltroComponente({data, selected}) {
 
   
   const sizeValues = {
@@ -20,16 +21,20 @@ function FiltroComponente({data}) {
   }
 
   const adaptaptableWidth = {
-    width: '' + (data.width - (data.width * 0.3)) + 'px'
+    width: '' + (data.width - (data.width * 0.3)) + 'px',
+      display:'inline-flex',
+      justifyContent:'space-between'
   }
 
   return (
-    <div className="rect-node" style={sizeValues}>
-        <div className='miniContainer'>
-        <button className='miniButtonSize iconSize' name="Info"> <FaInfo pointerEvents={'none'}/> </button>
-        <button className='miniButtonSize iconSize' name="Add" > <FaPlus pointerEvents={'none'}/> </button>
-        <button  className='miniButtonSize iconSize' name="Remove" > <FaTrashAlt style={removeStyle} pointerEvents={'none'}/> </button>
-        </div>
+    <div className="rect-node">
+        <NodeToolbar className="node-toolbar" isVisible={selected} position={Position.Top}>
+            <button  name="Info"> <FaInfo pointerEvents={'none'}/> Info</button>
+            <button name="Add" > <FaPlus pointerEvents={'none'}/> Adicionar </button>
+            <button  name="Remove" > <FaTrashAlt style={{color: 'red'}} pointerEvents={'none'}/> Remover</button>
+        </NodeToolbar>
+        <NodeResizer color="#307DBB" style={sizeValues} isVisible={selected} minWidth={75} minHeight={75} />
+
         {data.interIcon !== "" ? <Handle type="source" position={Position.Right} 
         style={{backgroundImage: `url(${data.interIcon})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', width: '10px', height:'10px'}}/> 
         :
