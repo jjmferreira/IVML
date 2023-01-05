@@ -2,9 +2,10 @@ const FormComponent = ({handleClose, handleOptionSwitch,createComp,dataSwitch, i
   return (
     <div className="popup-box">
       <div className="box">
-        <button onClick={handleClose}>x</button>
-        <br></br> <br></br>
-        {isAdd ? <select name="category" onChange={event => handleOptionSwitch(event.target.value)}>
+        <button className="closeButtonTop" onClick={handleClose}>x</button>
+        <br></br>
+          <b><label htmlFor="text">Tipo:</label></b>
+          {isAdd ? <select name="category" onChange={event => handleOptionSwitch(event.target.value)}>
             <option id="0" >Dados</option>
             {/*<option id="1" >Visualização</option>*/}
             <option id="2" >Legenda</option>
@@ -29,7 +30,7 @@ const FormComponent = ({handleClose, handleOptionSwitch,createComp,dataSwitch, i
         
         <br></br><br></br>
         {dataSwitch}
-        <button onClick={createComp}> Criar componente de dados!</button>       
+        <button className="formButton" onClick={createComp}> Criar componente!</button>
       </div>
     </div>
   );

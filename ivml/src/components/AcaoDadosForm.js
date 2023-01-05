@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import {FaTimes} from "react-icons/fa";
 
 const AcaoDadosForm = ({handleActionStart, handleActionFinish, createComp, nodesName,handleClose, changeDataName, actionResultType,handleSetupSourceIcon, listTargets}) => {
 
@@ -22,22 +23,33 @@ const AcaoDadosForm = ({handleActionStart, handleActionFinish, createComp, nodes
   }
 
 
+  const [selected, setSelected] = useState();
   const [targetComponents, setTargetComponents] = useState([]);
 
   
-  const addTargetComponent = (targetID) =>{
-    if(!targetComponents.includes(targetID)){
-      setTargetComponents([...targetComponents, targetID])
-      listTargets([...targetComponents, targetID])
+  const addTargetComponent = () =>{
+    if(!targetComponents.includes(selected)){
+      setTargetComponents([...targetComponents, selected])
+      listTargets([...targetComponents, selected])
     }
   }
+
+    const deleteTarget = (target) => {
+        if(target !== ""){
+            setTargetComponents(targetComponents.filter(t => !t.includes(target)));
+            listTargets(targetComponents.filter(t => !t.includes(target)));
+        }
+    }
 
     return (
 <div className="popup-box">
         <div className="box">
-          <button onClick={handleClose}>x</button>
-          <br></br> <br></br>
-          <b><label htmlFor="text">Resultado da Ação de Dados:</label></b>
+          <button className="closeButtonTop" onClick={handleClose}>x</button>
+          <br></br>
+            <b><label htmlFor="text">Nome da Ação de Dados:</label></b>
+            <input id="text" type="text" onChange={(e) => changeDataName(e)}/>
+            <br></br><br></br>
+          <b><label htmlFor="text">Tipo de Ação:</label></b>
           <br></br> <br></br>
           <select name="category" defaultValue={'DEFAULT'} onChange={event => actionResultType(event.target.value)}>
             <option value="DEFAULT" disabled>Escolhe o tipo:</option>
@@ -45,7 +57,6 @@ const AcaoDadosForm = ({handleActionStart, handleActionFinish, createComp, nodes
             <option>Destaque</option>
           </select>
         <br></br> <br></br>
-        <br></br>
         <b><label htmlFor="text">Componente de partida:</label></b>
         <br></br> <br></br>
         <select name="category" defaultValue={'DEFAULT'} onChange={event => handleActionStart(event.target.value)}>
@@ -65,27 +76,25 @@ const AcaoDadosForm = ({handleActionStart, handleActionFinish, createComp, nodes
             <option>Hover</option>
           </select>
         <br></br> <br></br>
-        <br></br>
-        <b><label htmlFor="text">Componente de Chegada:</label></b>
+        <b><label htmlFor="text">Componente(s) de Chegada:</label></b>
         <br></br> <br></br>
-        <select name="category" defaultValue={'DEFAULT'} onChange={event => {addTargetComponent(event.target.value)}}>
-        <option value="DEFAULT" disabled>Escolhe o componente:</option>
+        <select name="category" defaultValue={'DEFAULT'} onChange={event => {setSelected(event.target.value)}}>
+            <option value="DEFAULT" disabled>Escolhe o componente:</option>
             {nodesName.map((node) => (
             <option key={node.id} value={node.id}>
             {aux(node)}
             </option>
           ))}
         </select>
+        <button style={{marginLeft:"3px"}} onClick={() => addTargetComponent()}> Adicionar</button>
         <ul>
-        {targetComponents.map(targetC => <li key={keyCounter++}> {targetC} </li>)}
+        {targetComponents.map(targetC =>
+            <li key={keyCounter++}> {aux(nodesName.find(node => node.id === targetC))}
+                <button style={{marginLeft:"3px"}} onClick={() => deleteTarget(targetC)} > <FaTimes pointerEvents={'none'}/></button>
+            </li>)}
         </ul>
         <br></br> <br></br>
-        <br></br> <br></br>
-        <br></br>
-        <b><label htmlFor="text">Nome dos Dados:</label></b>
-        <input id="text" type="text" onChange={(e) => changeDataName(e)}/>
-        <br></br><br></br>
-        <button onClick={createComp}> Criar componente de dados!</button>
+        <button className="formButton" onClick={createComp}> Criar Ação de dados!</button>
         </div>
       </div>
     );

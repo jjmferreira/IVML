@@ -194,6 +194,12 @@
   white-space: nowrap;
 }
 
+.formButton{
+  position: absolute;
+  right: 25px;
+  bottom: 25px;
+}
+
 .closeButton{
   position: absolute;
   right: 25px;

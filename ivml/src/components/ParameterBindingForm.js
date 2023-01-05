@@ -1,4 +1,6 @@
 import {useState} from "react";
+import {FaTrashAlt, FaTimes} from "react-icons/fa";
+import {NodeToolbar} from "reactflow";
 
 const ParameterBindingForm = ({handleActionStart, handleActionFinish, handleClose, changeDataName, createComp, newList, nodesName, parameterNodes, handleSetupSourceIcon}) => {
 
@@ -9,12 +11,20 @@ const [optionName, setOptionName] = useState("");
 
 
 const addOption = () => {
-  if(optionName !== ""){
+  if(optionName !== "" && !options.includes(optionName)){
     setOptions([...options, optionName]);
     console.log("Options " + [...options, optionName]);
     newList([...options, optionName]);
   }
 }
+
+const deleteOption = (option) => {
+    if(option !== ""){
+      setOptions(options.filter(op => !op.includes(option)));
+      console.log("Options " + options.filter(op => !op.includes(option)));
+      newList(options.filter(op => !op.includes(option)));
+    }
+  }
 
 const aux = (curNode) => {
   let nodeName = curNode.data.name;
@@ -36,14 +46,10 @@ const aux = (curNode) => {
   return (
     <div className="popup-box">
       <div className="box">
-        <button onClick={handleClose}>x</button>
-        <br></br><br></br>
+        <button className="closeButtonTop" onClick={handleClose}>x</button>
+        <br></br>
         <div><b><label htmlFor="text">Título do componente:</label></b>
         <input id="text" type="text" onChange={(e) => changeDataName(e)}/>
-        <br></br><br></br></div>
-        <div><b><label htmlFor="text">Nova opção:</label></b>
-        <input id="text" type="text" onChange={(e) => setOptionName(e.target.value)}/>
-        <button onClick={addOption}> Adicionar!</button>
         <br></br><br></br>
         <b><label htmlFor="text">Parâmetro:</label></b>
         <br></br> <br></br>
@@ -74,13 +80,18 @@ const aux = (curNode) => {
             </option>
           ))}
         </select>
+          <br></br> <br></br>
+        <div><b><label htmlFor="text">Nova opção:</label></b>
+          <input id="text" type="text" onChange={(e) => setOptionName(e.target.value)}/>
+          <button onClick={addOption}> Adicionar!</button></div>
         <ul>
-        {options.map(option => <li key={keyCounter++}> {option} </li>)}
+          {options.map(option => <li key={keyCounter++}> {option}
+            <button style={{marginLeft:"3px"}} onClick={() => deleteOption(option)} > <FaTimes pointerEvents={'none'}/></button>
+          </li>)}
         </ul>
-        <br></br><br></br>
         </div>
        
-        <button onClick={ () => {createComp()}}> Criar componente de dados!</button>
+        <button className="formButton"  onClick={ () => {createComp()}}> Criar Parameter Binding!</button>
       </div>
     </div>
   );

@@ -28,8 +28,9 @@ function AcaoDadosComponente({data, selected}) {
     width: '' + data.width + 'px'
   }
   
-  const actonType = () => {
+  const actionType = () => {
     switch(data.actionResultType){
+        default :
       case "filtragem": return filtragem;
       case "destaque": return destaque;
     }
@@ -47,7 +48,7 @@ function AcaoDadosComponente({data, selected}) {
         </NodeToolbar>
         <NodeResizer color="#307DBB" isVisible={selected} style={sizeValues} minWidth={75} minHeight={75} />
         <div className='actionIconContainer' >
-         <img className='actionIcon'src={actonType()}></img>
+         <img className='actionIcon'src={actionType()}></img>
         </div>
         {<Handle type="target" position={Position.Left} style={handleStyle}/> }
         {<Handle type="source" position={Position.Right} id="a" style={handleStyle} />}
