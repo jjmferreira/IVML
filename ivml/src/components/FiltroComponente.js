@@ -8,17 +8,8 @@ const handleStyle = {
 };
 
 
-const removeStyle = {
-  color: 'red'
-}
-
 function FiltroComponente({data, selected}) {
 
-  
-  const sizeValues = {
-    height: '' + data.height + 'px',
-    width: '' + data.width + 'px'
-  }
 
   const adaptaptableWidth = {
     width: '' + (data.width - (data.width * 0.3)) + 'px',
@@ -32,8 +23,9 @@ function FiltroComponente({data, selected}) {
             <button  name="Info"> <FaInfo pointerEvents={'none'}/> Info</button>
             <button name="Add" > <FaPlus pointerEvents={'none'}/> Adicionar </button>
             <button  name="Remove" > <FaTrashAlt style={{color: 'red'}} pointerEvents={'none'}/> Remover</button>
+            <button   name="Interação"> Criar interação!</button>
         </NodeToolbar>
-        <NodeResizer color="#307DBB" style={sizeValues} isVisible={selected} minWidth={75} minHeight={75} />
+        <NodeResizer color="#307DBB" isVisible={selected} minWidth={75} minHeight={75} />
 
         {data.interIcon !== "" ? <Handle type="source" position={Position.Right} 
         style={{backgroundImage: `url(${data.interIcon})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', width: '10px', height:'10px'}}/> 

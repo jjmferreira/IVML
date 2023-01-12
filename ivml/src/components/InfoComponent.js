@@ -1,20 +1,19 @@
 import { useState } from "react";
 
-const InfoComponent = ({node, handleClose, resizeH, resizeW, handleCloseAndEdit, changeDataName, handleSetDataType, dataSpecs,setUpInterTypeAndSourceID}) => {
+const InfoComponent = ({node, handleClose, handleCloseAndEdit, changeDataName, handleSetDataType, dataSpecs,setUpInterTypeAndSourceID, actionResultType}) => {
 
   const [editing, setEditing] = useState(false);
   const [edited, setEdited] = useState(false);
-  const [heightValue, setHeightValue] = useState(node.data.height);
-  const [widthValue, setWidthValue] = useState(node.data.width);
   const [newName, setNewName] = useState('');
   const [choosenDataType, setChoosenDataType] = useState('')
   const [newInterTypeIcon, setNewInterTypeIcon] = useState('')
   const [currentNodeID, setCurrentNodeID] = useState('');
-  //index 0 - heigh; index 1 - width; index 2 - name - Values to display in input
-  const [currentValues, setCurrentValues] = useState([node.data.height,node.data.width, node.data.name, node.data.datatype])
+  const iconNameReconfig = "";
+  //index 0 - name index 1- data type index 2- hasInteraction index 3- actionresultType    index 4 - type of Interaction         Values to display in input (BEFORE RENDER)
+  const [currentValues, setCurrentValues] = useState([node.data.name, node.data.datatype, node.data.hasInteraction, node.data.actionResultType, node.data.typeOfInteraction])
   //value after clicked save
-  //index 0 - heigh; index 1 - width; index 2 - name - Values to display in input; index 3 - tipo de dados
-  const [savedValues, setSavedValues] = useState([node.data.height,node.data.width,node.data.name, node.data.datatype])
+  //index 0 - heigh; index 1 - width; index 2 - name - Values to display in input; index 3 - Result of interaction index 4 - type of Interaction  
+  const [savedValues, setSavedValues] = useState([node.data.name, node.data.datatype, node.data.hasInteraction, node.data.actionResultType, node.data.typeOfInteraction])
 
 
   //current dataType Specs
@@ -27,7 +26,7 @@ const InfoComponent = ({node, handleClose, resizeH, resizeW, handleCloseAndEdit,
   const toggleEdit = () => {
     setEditing(!editing);
     console.log(savedValues[0] + " Valores guardados")
-    setCurrentValues([savedValues[0], savedValues[1], savedValues[2], savedValues[3]]);
+    setCurrentValues([savedValues[0], savedValues[1],savedValues[2], savedValues[3], savedValues[4]]);
   }
 
   const wasEdited = () => {
@@ -67,11 +66,15 @@ const InfoComponent = ({node, handleClose, resizeH, resizeW, handleCloseAndEdit,
             {!editing ? 
             <>
             <br></br>
-            <h3>Nome do componente: { savedValues[2]}</h3>
-            <h3>Altura : { savedValues[0]}</h3>
-            <h3>Largura : { savedValues[1]}</h3>
-            {savedValues[3] !== "" ? <h3>Tipo de Dados: {savedValues[3]}</h3> : <></>}
+            <h3>Nome do componente: { savedValues[0]}</h3>
+            {savedValues[1] !== "" ? <h3>Tipo de Dados: {savedValues[1]}</h3> : <></>}
             {node.data.dataExplain.length !== 0 ? <h3>Especificação dos Dados: {node.data.dataExplain.map(option => <li key={keyCounter++}> {option} </li>)}</h3> : ''}
+            {savedValues[2] ?
+            <>
+            <h3>Resultado da Interação: {savedValues[3]}</h3>
+            <h3>Tipo da Interação: {savedValues[4]}</h3>
+            </>
+            : ""}
             <br></br>
             </>
             : 
@@ -79,21 +82,12 @@ const InfoComponent = ({node, handleClose, resizeH, resizeW, handleCloseAndEdit,
 
             <b><label htmlFor="text">Título do componente:</label></b>
             <input id="text" type="text" 
-              value={currentValues[2]} onChange={(e) => {setCurrentValues([currentValues[0], currentValues[1], e.target.value, currentValues[3]]); setNewName(e)}}/>
+              value={currentValues[0]} onChange={(e) => {setCurrentValues([e.target.value, currentValues[1], currentValues[2], currentValues[3], , currentValues[4]]); setNewName(e)}}/>
             <br></br><br></br>
 
-            <b><label htmlFor="text">Altura do componente:</label></b>
-            <input id="text" type="number" min="50"  step="10" 
-              value={currentValues[0]} onChange={(e) => {setCurrentValues([e.target.value, currentValues[1], currentValues[2],currentValues[3]]); setHeightValue(e)}}/>
-            <br></br><br></br>
-
-            <b><label htmlFor="text">Largura do componente:</label></b>
-            <input id="text" type="number" min="50"  step="10" 
-              value={currentValues[1]} onChange={(e) => {setCurrentValues([currentValues[0], e.target.value, currentValues[2], currentValues[3]]); setWidthValue(e)}}/>
-            <br></br><br></br>      
             {node.type === "dadosUpdater" ? <>
             <b><label htmlFor="text">Tipo dos Dados:</label></b>
-            <select name="category" defaultValue={'DEFAULT'} onChange={(e) => {setChoosenDataType(e.target.value); setCurrentValues([currentValues[0], currentValues[1], currentValues[2], e.target.value])}}>
+            <select name="category" defaultValue={'DEFAULT'} onChange={(e) => {setChoosenDataType(e.target.value); setCurrentValues([currentValues[0], e.target.value, currentValues[2],currentValues[3], currentValues[4]])}}>
                     <option value="DEFAULT" disabled>Escolhe o componente:</option>
                     <option id="1">Binário</option>
                     <option id="2">Contínuo</option>
@@ -105,10 +99,19 @@ const InfoComponent = ({node, handleClose, resizeH, resizeW, handleCloseAndEdit,
              <br></br><br></br>{handleDataSpec(choosenDataType)}
             </> 
             : 
-            node.type === "acaoDadosUpdater" ? <>
+            savedValues[2] ? <>
+            <br></br> <br></br>
+              <b><label htmlFor="text">Resultado da Interação:</label></b>
+              <br></br> <br></br>
+            <select name="category" defaultValue={'DEFAULT'} onChange={event => {actionResultType(event.target.value); setCurrentValues([currentValues[0], currentValues[1], true, event.target.value, currentValues[4]])}}>
+              <option value="DEFAULT" disabled>Escolhe o tipo:</option>
+              <option>Filtragem</option>
+              <option>Destaque</option>
+            </select>
+            <br></br> <br></br>
             <b><label htmlFor="text">Tipo de interação:</label></b>
             <br></br><br></br>
-            <select name="category" defaultValue={'DEFAULT'} onChange={event => {setNewInterTypeIcon(event.target.value); setCurrentNodeID(node.id)}}>
+            <select name="category" defaultValue={'DEFAULT'} onChange={event => {setNewInterTypeIcon(event.target.value); setCurrentNodeID(node.id); setCurrentValues([currentValues[0], currentValues[1], true, currentValues[3], event.target.value])}}>
               <option value="DEFAULT" disabled>Escolhe o tipo:</option>
               <option>Clique</option>
               <option>Hover</option>
@@ -117,9 +120,9 @@ const InfoComponent = ({node, handleClose, resizeH, resizeW, handleCloseAndEdit,
             </>
           : ""}
               <button className="closeButton" 
-              onClick={() => {changeDataName(newName); resizeH(heightValue); resizeW(widthValue); 
-              handleSetDataType(choosenDataType); wasEdited(); toggleEdit(); setUpInterTypeAndSourceID(newInterTypeIcon, currentNodeID)
-              setSavedValues([currentValues[0], currentValues[1],currentValues[2], currentValues[3]])}}> Guardar Alterações!</button>
+              onClick={() => {changeDataName(newName); handleSetDataType(choosenDataType); wasEdited(); 
+              toggleEdit(); setUpInterTypeAndSourceID(newInterTypeIcon, currentNodeID)
+              setSavedValues([currentValues[0], currentValues[1], currentValues[2], currentValues[3], currentValues[4]])}}> Guardar Alterações!</button>
 
             </>      
             }

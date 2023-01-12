@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import ReactFlow, { SmoothStepEdge, addEdge, applyEdgeChanges, applyNodeChanges,
+import ReactFlow, { addEdge, applyEdgeChanges, applyNodeChanges,
   ReactFlowProvider, useReactFlow, MarkerType} from 'reactflow';
 import { SmartStepEdge } from '@tisoap/react-flow-smart-edge';
 //import '@reactflow/node-resizer/dist/style.css';
@@ -11,7 +11,6 @@ import Vis from './components/Vis';
 import LegendaComponente from './components/LegendaComponente';
 import FiltroComponente from './components/FiltroComponente';
 import TituloComponente from './components/TituloComponente';
-import AcaoDadosComponente from './components/AcaoDadosComponente';
 import ButComponente from './components/ButComponente';
 import ParameterComponente from './components/ParameterComponente';
 import ParameterBindingComponente from './components/ParameterBindingComponente.js';
@@ -19,7 +18,7 @@ import ParameterBindingComponente from './components/ParameterBindingComponente.
 
 import './components/components.css';
 import FormComponent from './components/FormComponent';
-import AcaoDadosForm from './components/AcaoDadosForm';
+import InteractionForm from './components/InteractionForm';
 import InfoComponent from './components/InfoComponent';
 import DynamicForm from './components/DynamicForm';
 import GraficoComponente from "./components/GraficoComponente";
@@ -45,7 +44,7 @@ const edgeTypes = {
 }
 
 const nodeTypes = { dadosUpdater: Dados, visUpdater: Vis, legendaUpdater: LegendaComponente, filtroUpdater: FiltroComponente, 
-  tituloUpdater: TituloComponente, acaoDadosUpdater: AcaoDadosComponente, imgUpdater: VarVisuaisImgComponente, graficoUpdater: GraficoComponente, 
+  tituloUpdater: TituloComponente, imgUpdater: VarVisuaisImgComponente, graficoUpdater: GraficoComponente, 
   buttonUpdater: ButComponente, parameterUpdater: ParameterComponente, parameterBindingUpdater: ParameterBindingComponente};
 
 const initialNodes = [
@@ -88,12 +87,11 @@ function App() {
 
   const [parentNodeClicked, setParentNodeClicked] = useState("");
 
-  const [edgeActionStart, setedgeActionStart] = useState("");
-  const [edgeActionEnd, setedgeActionEnd] = useState("");
 
   //interaction Icons set up source
   const [currentSource, setCurrentSource] = useState("");
   const [typeOfInterIcon, setTypeOfInterIcon] = useState("");
+
 
 
   //No editado
@@ -111,15 +109,13 @@ function App() {
   const [nodeIDCounter, setNodeIDCounter] = useState(0);
   const [edgeIDCounter, setEdgeIDCounter] = useState(0);
 
-  //VisCompSize passed on Data
-  const minSizeValue = 75;
-  const [newH, setH] = useState(minSizeValue);
-  const [newW, setW] = useState(minSizeValue);
+
+  //Variável para passar o nó do componente de partida
+  const [startInteractionComponentID, setStartInteractionComponentID] = useState('')
 
 
   //ParamterOptionsList e Action Edge Targets
   const [paramList, setParamList] = useState([]);
-  const [targetList, setTargetList] = useState([]);
 
   //icones açao de dados
   const [actionIconType, setActionIconType] = useState("");
@@ -238,7 +234,7 @@ function App() {
       default: console.log("Yooo"); break;
     }
     const nodeData = { name: newDataName, datatype: newDataType, dataExplain: newDataSpec, varName: varType, graphType: graphType, compCounter: nodeCounter,
-     height: newH, width: newW, parameterOptions: paramList, actionResultType: actionIconType, interIcon: ""}; 
+    parameterOptions: paramList, interIcon: "", hasInteraction: false, actions: []}; 
     let extentAtt = 'parent';
     if(parentNodeClicked.length === 0){
       extentAtt = ''
@@ -251,43 +247,44 @@ function App() {
     setDataComponent("");
     setParentNodeClicked("");
     setNodeIDCounter(nodeIDCounter + 1);
-    setH(minSizeValue);
-    setW(minSizeValue);
     setIsAdd(false);
-    if(edgeActionStart !== "" && targetList !== []){
-      setCurrentSource(edgeActionStart)
-      let listOfTargetEdges = [];
-      console.log(edgeIDCounter)
-      let edgeCounter = edgeIDCounter +1;
-      console.log(edgeCounter)
-      targetList.map( tcomp => {
-        listOfTargetEdges = [...listOfTargetEdges, { id: '' + edgeCounter + '', source: nodeid, target: tcomp, markerEnd: { type: MarkerType.Arrow }, animated:true, sourceHandle: 'b'}]
+    closeWindow();
+  }
+
+
+  const createInteractionEdges = (actions) => {
+    if(actions !== []){
+      setCurrentSource(startInteractionComponentID)
+      addActionsToNode(startInteractionComponentID,actions)
+      let edgeCounter = edgeIDCounter;
+      let edgesToAdd = []
+      actions.map((action) => {
+        edgesToAdd = [...edgesToAdd, 
+        { id: '' + edgeCounter + '', source: startInteractionComponentID, target: action.targetID, data:action.id, markerEnd: { type: MarkerType.Arrow }, animated:true, sourceHandle: action.trigger}]
         edgeCounter += 1;
       })
-      setEdges([...edges,
-      { id: '' + edgeCounter + '', source: edgeActionStart, target: nodeid,label: 'dash/url', markerEnd: { type: MarkerType.Arrow }, sourceHandle: 'a' } ,
-      ...listOfTargetEdges])
+      setEdges([...edges, ...edgesToAdd])
       setEdgeIDCounter(edgeCounter)
     }
     closeWindow();
   }
 
+  const addActionsToNode = (nodeid, actions) => {
+    nodes.map((node) => {
+      if(node.id === nodeid){
+        node.data.actions = [...node.data.actions, ... actions];
+      }
+    })
+  }
+
   // Função para alterar os handles para as imagens
   useEffect(() => {
     if(currentSource !== ""){
-       
       setNodes((nds) => 
       nds.map((node) => {
         if(node.id === currentSource) {
-          switch(typeOfInterIcon){
-            case "Clique" : node.data.interIcon = clique;
-            break;
-            case "Hover": node.data.interIcon = hover;
-            break;
-            default: node.data.interIcon = "";
-          }
+          node.data.hasInteraction = true;
           setCurrentSource("");
-          setTypeOfInterIcon("");
         }
         return node;
       })
@@ -299,13 +296,6 @@ function App() {
       setNodes((nds) => 
       nds.map((node) => {
         if(node.id === currentEditedNode.id){
-          if(newH !== minSizeValue){
-            node.data.height = newH;
-          }
-          if (newW !== minSizeValue){
-            node.data.width = newW;
-          } 
-          
           if (newDataName !== ""){
             node.data.name = newDataName;
           }
@@ -314,9 +304,12 @@ function App() {
             node.data.datatype = newDataType;
           }
 
+          if(actionIconType !== ""){
+            node.data.actionResultType = actionIconType;
+          }
+          
+
           setCurrentEditedNode([]);
-          setH(minSizeValue);
-          setW(minSizeValue);
           setDataName("");
           setDataType("");
 
@@ -337,10 +330,10 @@ function App() {
     setActionForm(false);
     setParameterForm(false)
     setParentNodeClicked("");
-    setedgeActionEnd("");
-    setedgeActionStart("");
     setIsAdd(false);
     setParamList([]);
+    setStartInteractionComponentID("")
+
   }
 
   const toggleCompPopup = () => {
@@ -350,11 +343,11 @@ function App() {
   }
   
   
-  const toggleActionPopup = () => {
+  const toggleActionPopup = (nodeid) => {
     setIsOpen(true);
     setActionForm(true)
     setAllNodesName(nodes.filter((node) => (node.parentNode !== "" && hasNick(node.parentNode)) || node.data.compCounter !== undefined))
-    setDataComponent("acaoDadosUpdater")
+    setStartInteractionComponentID(nodeid)
    }
 
    const hasNick = (nodeid) => {
@@ -451,23 +444,12 @@ function App() {
   }
 }
 
-const handleHeightChange = (event) => {
-  if(event.target !== undefined){
-    setH(event.target.value)
-  }
-}
-
-const handleWidhtChange = (event) => {
-  if(event.target !== undefined){
-    setW(event.target.value)
-  }
-}
 
 const handleActionIcon = (actionName) => {
   switch(actionName){
-    case "Filtragem": setActionIconType("filtragem");
+    case "Filtragem": setActionIconType("Filtragem");
     break;
-    case "Destaque": setActionIconType("destaque");
+    case "Destaque": setActionIconType("Destaque");
     break;
     default: setActionIconType("");
   } 
@@ -486,22 +468,22 @@ const handleUpdate = () =>{
     )
 
     case "visUpdater": 
-    return (<DynamicForm changeDataName={handleNameChange} changeHeight={handleHeightChange} changeWidth={handleWidhtChange}></DynamicForm>)
+    return (<DynamicForm changeDataName={handleNameChange} ></DynamicForm>)
 
     case "legendaUpdater": 
-    return (<DynamicForm changeDataName={handleNameChange} changeHeight={handleHeightChange} changeWidth={handleWidhtChange}></DynamicForm>)
+    return (<DynamicForm changeDataName={handleNameChange} ></DynamicForm>)
 
     case "tituloUpdater": 
-    return (<DynamicForm changeDataName={handleNameChange} changeHeight={handleHeightChange} changeWidth={handleWidhtChange}></DynamicForm>)
+    return (<DynamicForm changeDataName={handleNameChange} ></DynamicForm>)
 
     case "filtroUpdater": 
-    return (<DynamicForm changeDataName={handleNameChange} changeHeight={handleHeightChange} changeWidth={handleWidhtChange}></DynamicForm>)
+    return (<DynamicForm changeDataName={handleNameChange} ></DynamicForm>)
 
     case "buttonUpdater": 
-    return (<DynamicForm changeDataName={handleNameChange} changeHeight={handleHeightChange} changeWidth={handleWidhtChange}></DynamicForm>)
+    return (<DynamicForm changeDataName={handleNameChange} ></DynamicForm>)
 
     case "parameterUpdater": 
-    return (<DynamicForm changeDataName={handleNameChange} changeHeight={handleHeightChange} changeWidth={handleWidhtChange}></DynamicForm>)
+    return (<DynamicForm changeDataName={handleNameChange} ></DynamicForm>)
 
     case "imgUpdater": 
     return (<DynamicForm changeVar={true} handleVarType={handleVarType}></DynamicForm>)
@@ -522,22 +504,42 @@ const handleUpdate = () =>{
       break;
       case "Remove": removeComponent(node.id);
       break;
+      case "Interação": toggleActionPopup(node.id);
+      break;
       default: return ("");
     } 
  }
 
+ const deleteActionFromNode = (edges) => {
+  edges.map((edge)=> {
+    nodes.map((node) => {
+      if(node.id === edge.source){
+        console.log(node.data.actions)
+
+        node.data.actions = node.data.actions.filter((action) => (action.id !== edge.data))
+        console.log(nodes.find((n) =>     n.id === node.id  ))
+
+      }
+
+    })
+  })
+ }
+
+
+ /*
  const handleActionStart = (startNodeID) => {
   setedgeActionStart('' + startNodeID + '')
-}
+}*/
 
-const handleActionFinish = (endNodeID, number) => {
+/*const handleActionFinish = (endNodeID, number) => {
   setedgeActionEnd('' + endNodeID + '')
-}
+}*/
 
 
+/*
 const handleEndPointList = (targets) => {
   setTargetList(targets)
-}
+}*/
 
 
 const handleSetUpInterIcon = (iconType) => {
@@ -548,7 +550,7 @@ const handleSetUpTypeAndSourceID = (icontype, actionDataID) => {
   if(icontype !== ""){
     setTypeOfInterIcon(icontype)
     edges.map((edge) => {
-      if(edge.target === actionDataID){
+      if(edge.source === actionDataID){
         setCurrentSource(edge.source)
       }
     })
@@ -559,6 +561,10 @@ const parameterOptionsList = (options) => {
   setParamList(options);
 }
 
+const actionsCreated = (actions) => {
+  createInteractionEdges(actions)
+}
+
 
   return (
     <div style={{ height: 800 }}>
@@ -566,11 +572,6 @@ const parameterOptionsList = (options) => {
       type="button"
       value="Criar Componente!"
       onClick={toggleCompPopup}
-    />
-    <input
-      type="button"
-      value="Criar Ação de dados!"
-      onClick={toggleActionPopup}
     />
      <input
       type="button"
@@ -589,6 +590,7 @@ const parameterOptionsList = (options) => {
       fitView
       style={rfStyle}    
       onInit={setRfInstance}
+      onEdgesDelete={(edges) => deleteActionFromNode(edges)}
       deleteKeyCode={'Delete'}
     >
       <div className="save__controls">
@@ -608,30 +610,24 @@ const parameterOptionsList = (options) => {
     {isOpen && infoForm ? <InfoComponent
       node={nodeInfo}
       handleClose = {closeWindow}
-      resizeH={handleHeightChange}
-      resizeW={handleWidhtChange}
       changeDataName={handleNameChange}
       setUpInterTypeAndSourceID={handleSetUpTypeAndSourceID}
+      actionResultType={handleActionIcon}
       handleCloseAndEdit={handleUpdate}
-      handleSetDataType={handleAddDataType} 
-      //dataSpecs={handleAddDataSpecs}
+      handleSetDataType={handleAddDataType}
     >
     </InfoComponent> : "" }
-    {isOpen && actionForm ? <AcaoDadosForm
-      handleActionStart={handleActionStart}
-      handleActionFinish={handleActionFinish} 
+    {isOpen && actionForm ? <InteractionForm
+      startcomp={startInteractionComponentID}
       nodesName={allNodesName}
       changeDataName={handleNameChange}
-      actionResultType={handleActionIcon}
-      handleSetupSourceIcon={handleSetUpInterIcon}
-      listTargets={handleEndPointList}
-      createComp={() => createDataComp(parentNodeClicked)}  
+      actionsDone={actionsCreated}
       handleClose = {closeWindow}
-    ></AcaoDadosForm> : "" }
+    ></InteractionForm> : "" }
     {isOpen && parameterForm ? <ParameterBindingForm 
     handleClose={closeWindow}
-    handleActionStart={handleActionStart}
-    handleActionFinish={handleActionFinish} 
+    //handleActionStart={handleActionStart}
+    //handleActionFinish={handleActionFinish} 
     changeDataName={handleNameChange}
     newList={parameterOptionsList}
     handleSetupSourceIcon={handleSetUpInterIcon}
