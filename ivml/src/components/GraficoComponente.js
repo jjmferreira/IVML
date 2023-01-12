@@ -50,7 +50,6 @@ function GraficoComponente({data, selected}) {
               <button  name="Remove" > <FaTrashAlt style={{color: 'red'}} pointerEvents={'none'}/> Remover</button>
           </NodeToolbar>
         {switchVariable()}
-        <button className='miniButtonSize1 miniIconSize' name="Remove" > <FaTrashAlt style={removeStyle} pointerEvents={'none'}/> </button>
       </div>
     </div>
   );

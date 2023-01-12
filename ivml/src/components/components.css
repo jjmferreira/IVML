@@ -85,8 +85,8 @@
 }
 
 .dados-node {
-  min-width: 25px;
-  min-height: 10px;
+  min-width: 20px;
+  min-height: 20px;
   width: 100%;
   height: 100%;
   border: 1px solid rgb(0, 0, 0);
