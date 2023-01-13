@@ -7,7 +7,7 @@ const removeStyle = {
 }
 
 
-function TituloComponente({data, selected}) {
+function Titulo({data, selected}) {
 
   
   const sizeValues = {
@@ -26,4 +26,4 @@ function TituloComponente({data, selected}) {
   );
 }
 
-export default TituloComponente;
+export default Titulo;

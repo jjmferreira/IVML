@@ -1,5 +1,5 @@
 .vis-node {
-    min-width: 75px;
+    min-width: 100px;
     min-height: 75px;
     width: 100%;
     height: 100%;
@@ -57,7 +57,7 @@
 }
 
 .button-node {
-  min-width: 25px;
+  min-width: 50px;
   min-height: 25px;
   width: 100%;
   height: 100%;
@@ -66,8 +66,8 @@
 }
 
 .parameter-node{
-  min-width: 75px;
-  min-height: 25px;
+  min-width: 100px;
+  min-height: 50px;
   width: 100%;
   height: 100%;
   border: 1px solid rgb(0, 0, 0);
@@ -91,8 +91,6 @@
   height: 100%;
   border: 1px solid rgb(0, 0, 0);
   background: rgb(255, 255, 255);
-  display:inline-flex;
-  justify-content:space-between;
 }
 
 .titulo-node {
@@ -112,8 +110,14 @@
 }
 
 .text-margin{
-  margin: 0px 20px 0% 0px;
   align-self: center;
+  display: inline-grid;
+}
+
+.text-margin b{
+  overflow: hidden;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .acao-dados-node{
@@ -155,12 +159,17 @@
   border-radius: 20px;
 }
 
-.save__controls {
+.header {
   position: absolute;
-  right: 10px;
-  top: 10px;
   z-index: 4;
   font-size: 12px;
+  width: 100%;
+}
+
+.header .save__controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 
 .corner-element {
@@ -176,12 +185,16 @@
 
 .componentNameStyle{
   position: absolute;
-  top: 3px;
+  top: 5px;
   left: 25px;
   font-size: 12px;
-  height: 15px;
+  display: inline-grid;
+}
+
+.componentNameStyle b{
+  overflow: hidden;
   text-overflow: ellipsis;
-  white-space: normal;
+  white-space: nowrap;
 }
 
 .componentNameStyleWithoutCounter{
@@ -194,10 +207,18 @@
   white-space: nowrap;
 }
 
+.parameterSelect{
+  margin-top: 3px;
+  font-size: 10px;
+}
+
+.parameterSelect select{
+  font-size: 10px;
+}
+
 .formButton{
   position: absolute;
   right: 25px;
-  bottom: 25px;
 }
 
 .closeButton{
@@ -229,4 +250,22 @@ width: 100%;
   height: 20px;
   margin-top: 20px;
   margin-left: 10px;
+}
+
+.handle_clique{
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 10px;
+  height: 10px;
+  top: 35%;
+  background-image: url("../imagens/Icones/Clique.PNG");
+}
+
+.handle_hover{
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 10px;
+  height: 10px;
+  top: 65%;
+  background-image: url("../imagens/Icones/Hover.PNG");
 }

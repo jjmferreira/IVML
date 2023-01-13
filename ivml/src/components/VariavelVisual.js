@@ -9,7 +9,7 @@ import {NodeResizer} from "@reactflow/node-resizer";
 
 
 
-function VarVisuaisImgComponente({data, selected}) {
+function VarVisuais({data, selected}) {
 
   const switchVariable = () => {
     switch(data.varName){
@@ -31,4 +31,4 @@ function VarVisuaisImgComponente({data, selected}) {
   );
 }
 
-export default VarVisuaisImgComponente;
+export default VarVisuais;

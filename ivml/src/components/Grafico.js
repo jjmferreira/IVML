@@ -18,7 +18,7 @@ import {NodeToolbar, Position} from "reactflow";
 import {FaInfo, FaPlus, FaTrashAlt} from "react-icons/fa";
 import {NodeResizer} from "@reactflow/node-resizer";
 
-function GraficoComponente({data, selected}) {
+function Grafico({data, selected}) {
   const removeStyle = {
     color: 'red'
   }
@@ -55,4 +55,4 @@ function GraficoComponente({data, selected}) {
   );
 }
 
-export default GraficoComponente;
+export default Grafico;
