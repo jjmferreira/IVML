@@ -22,15 +22,14 @@ const CriarComponente = ({handleClose, createComp, parent}) => {
     const extent = parent !== "" ? 'parent' : '';
 
     const nodeData = { name: '', datatype: '', compCounter: '', varName: '',
-        graphType: '', dataExplain: [], parameterOptions: '',
-        actionResultType: '', interIcon: '', actions: []};
+        graphType: '', dataExplain: [], parameterOptions: '', actions: []};
 
     const [node, setNode] = useState({ id: '', type: '', position:{ x: 50, y: 50 }, data: nodeData,
         parentNode: parent === undefined ? "" : parent.id, extent:extent, selected: true});
 
     const [componentType, setComponentType] = useState('');
-    const [varType, setVarType] = useState();
-    const [graphType, setGraphType] = useState();
+//    const [varType, setVarType] = useState();
+//    const [graphType, setGraphType] = useState();
     const [dataType, setDataType] = useState();
     const [option, setOption] = useState();
     const [dataOptions, setDataOptions] = useState([]);
@@ -52,13 +51,12 @@ const CriarComponente = ({handleClose, createComp, parent}) => {
                 node.data.dataType = dataType;
                 node.data.dataExplain = dataOptions;
                 break;
-            case "varVisual":
-                node.data.varName = varType;
-                node.data.name = '';
+            case "varvisual":
+                //node.data.varName = varType;
+                node.data.name = 'var';
                 break;
             case "grafico":
-                node.data.graphType = graphType;
-                node.data.name = '';
+                node.data.name = 'graph';
                 break;
             case "parametro":
                 node.data.parameterOptions = paramOptions;
@@ -75,13 +73,17 @@ const CriarComponente = ({handleClose, createComp, parent}) => {
     }
 
     const changeVarType = (type) => {
-        setVarType(type);
-        setNode(node.data.varType = type);
+        //node.data.varType = type;
+        node.data.varName = type;
+        node.data.name = type;
+        setNode(node);
+        console.log(node)
     }
 
     const changeGraphType = (type) => {
-        setGraphType(type);
-        setNode(node.data.graphType = type);
+        console.log("Tipo " + type)
+        node.data.graphType = type;
+        setNode(node);
     }
 
     const changeDataType = (type) => {
@@ -131,7 +133,7 @@ const CriarComponente = ({handleClose, createComp, parent}) => {
         const param = {value: "parametro", name: "Parâmetro"};
         const titulo = {value: "titulo", name: "Título"};
         const dados = {value: "dados", name: "Dados"};
-        const varVis = {value: "varVisual", name: "Variáveis Visuais"};
+        const varVis = {value: "varvisual", name: "Variáveis Visuais"};
         const graph = {value: "grafico", name: "Tipos de Gráficos"};
         let allowed = [];
         if (parent !== ""){
@@ -166,19 +168,19 @@ const CriarComponente = ({handleClose, createComp, parent}) => {
 
           <br></br><br></br>
           {/*detail by component type*/}
-          {componentType === "varVisual" ? <div className="wrapper">
+          {componentType === "varvisual" ? <div className="wrapper">
                 {vars.map((varType) => (
-                    <div key={varType} onChange={event => changeVarType(event.currentTarget.value)} className="item">
-                        <input type="radio" value={varType}/>{varType}</div>
+                    <div key={varType} onChange={event => changeVarType(event.target.value)} className="item">
+                        <input type="radio" name="selected" value={varType}/>{varType}</div>
                 ))}
             </div> :
             componentType === "grafico" ?
                 <div className="wrapper">
                     {graficos.map((grafico) => (
-                        <div key={grafico.id} onChange={event => changeGraphType(event.currentTarget.value)} className="item">
+                        <div key={grafico.id} onChange={event => changeGraphType(event.target.value)} className="item">
                             <img src={grafico} alt={grafico} /><br/>
                             <label>{grafico.split("media/")[1].split(".")[0]}</label>
-                            <input type="radio" value={grafico.split("media/")[1].split(".")[0]}/></div>
+                            <input type="radio" name="selected" value={grafico.split("media/")[1].split(".")[0]}/></div>
                     ))}
                 </div>
                 : <div><b><label htmlFor="text">Título do componente:</label></b>

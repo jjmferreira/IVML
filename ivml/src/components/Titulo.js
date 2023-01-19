@@ -2,18 +2,8 @@ import {FaTrashAlt} from 'react-icons/fa'
 import {NodeToolbar, Position} from "reactflow";
 import {NodeResizer} from "@reactflow/node-resizer";
 
-const removeStyle = {
-  color: 'red'
-}
-
 
 function Titulo({data, selected}) {
-
-  
-  const sizeValues = {
-    height: '' + data.height + 'px',
-    width: '' + data.width + 'px'
-  }
 
   return (
   <div className="titulo-node" >

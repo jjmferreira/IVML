@@ -140,7 +140,7 @@ function App() {
   const createNode = (node) => {
     setParentNode("");
     if (node === undefined || node.type === ''){
-      console.log("Undefined Component; Abort");
+      alert('Undefined Component; Choose a type')
       return;
     }
     //tirar selecao de todos os outros nodes
@@ -150,7 +150,7 @@ function App() {
     n.id = nodes.length === 0 ? "0" : "" + (parseInt(nodes[nodes.length-1].id)+1);
     const components = nodes.filter(nd => nd.type === node.type);
     const lastIndex = components.length === 0 ? "0" : "" +(parseInt(components[components.length-1].id)+1);
-    if(n.type !== "titulo" && n.type !== "dados" && n.type !== "varVisual" && n.type !== "grafico")
+    if(n.type !== "titulo" && n.type !== "dados" && n.type !== "varvisual" && n.type !== "grafico")
       n.data.compCounter = node.type.substr(0,1).toUpperCase() + lastIndex;
     setNodes([...nodes, n]);
     setOpenForm("");
@@ -187,7 +187,7 @@ function App() {
     let nodeName = node.data.name;
     if(node.data.compCounter !== ''){
       return node.data.compCounter;
-    } else{
+    } else {
       let string = nodeName === '' ? "Componente de " + node.type : nodeName;
       if(node.parentNode !== ""){
         const parentNode = nodes.find(n => n.id === node.parentNode);
@@ -227,7 +227,7 @@ function App() {
  }
 
   return (<>
-    {openForm === "" ? <ReactFlow
+    <div className='side'><ReactFlow
       nodes={nodes}
       edges={edges}
       edgeTypes={edgeTypes}
@@ -252,26 +252,31 @@ function App() {
           <input type="file" onChange={chooseFile}/>
         </div>
       </div>
-    </ReactFlow> : ""}
+    </ReactFlow>
     {openForm === "CREATE" ? <CriarComponente
     parent={parentNode}
     createComp={createNode}
     handleClose = {closeWindow}
-    /> : "" }
-    {openForm === "INFO" ? <InfoForm
+    />: "" }
+    
+    {openForm === "INFO" && nodes.filter(n => n.selected === true).length > 0 ? <InfoForm
       nodes={nodes}
+      edges={edges}
       handleClose = {closeWindow}
       editComponent={editNode}
       getName={nodeLabel}
     /> : "" }
-    {openForm === "INTERACTION" ? <CriarInteracao
+    {openForm === "INTERACTION" && nodes.filter(n => n.selected === true).length > 0 ? <CriarInteracao
     source={nodes.find(n => n.id === interactionSource)}
     nodes={nodes.filter((node) => node.parentNode === "" ||
         (node.parentNode !== interactionSource && node.type !== 'grafico' && node.type !== 'varVisual'))}
+    edges={edges.filter(edge => edge.source === interactionSource)}
     actionsDone={createInteraction}
     getName={nodeLabel}
     handleClose = {closeWindow}
     /> : "" }
+    </div>
+    
     </>
   );
 }

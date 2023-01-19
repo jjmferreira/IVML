@@ -1,5 +1,5 @@
 import {NodeToolbar, Handle, Position } from 'reactflow';
-import {FaPlus, FaInfo, FaTrashAlt} from 'react-icons/fa'
+import {FaInfo, FaTrashAlt} from 'react-icons/fa'
 import { NodeResizer } from '@reactflow/node-resizer';
 import '@reactflow/node-resizer/dist/style.css';
 

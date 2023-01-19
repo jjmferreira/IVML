@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {FaTimes} from "react-icons/fa";
 
-const InfoForm = ({nodes, handleClose, editComponent, getName}) => {
+const InfoForm = ({nodes, edges, handleClose, editComponent, getName}) => {
 
   const node = nodes.find(node => node.selected);
 
@@ -69,6 +69,58 @@ const InfoForm = ({nodes, handleClose, editComponent, getName}) => {
     </>
   }
 
+  const getTargets = (interaction) => {
+    let currentTargetsID = [];
+    edges.map((edge) => {
+      if(interaction.id === edge.data && edge.source === node.id){
+        console.log(edge.data + " Edge data " + interaction.id)
+        currentTargetsID = [...currentTargetsID, edge.target]
+      }
+    })
+    return currentTargetsID;
+  }
+
+  const showActions = (actions) =>{
+    let clique = [];
+    let hover = [];
+    actions.map(action => {
+      console.log(action.id + " Shw")
+      switch(action.trigger){
+        case 'Clique': 
+          clique.push(action);
+          break;
+        case 'Hover': 
+          hover.push(action);
+          break;
+        default: return;
+      }
+    })
+    return <>
+      {clique.length !== 0 ? <><br/><b>Interações de clique:</b><br/><br/></> : ''}
+      {clique.map((act) => <>      
+        <b>Nome do interação: </b>{act.name}<br/>
+        <b>Resultado da interação: </b>{act.result}<br/>
+        <b>Componente afetados: </b>
+            {console.log(act)}
+            <ul>
+              {getTargets(act).map(targetid => <li key={targetid}> {getName(nodes.find(node => node.id === targetid))}</li>)}
+            </ul>
+        </>)
+      }
+      {hover.length !== 0 ? <><br/><b>Interações de Hover:</b><br/><br/></>: ''}
+      {hover.map((act) => <>      
+        <b>Nome do interação: </b>{act.name}<br/>
+        <b>Resultado da interação: </b>{act.result}<br/>
+        <b>Componente afetados: </b>
+        {console.log(act)}
+            <ul>
+              {getTargets(act).map(targetid => <li key={targetid}> {getName(nodes.find(node => node.id === targetid))}</li>)}
+            </ul>
+        </>)
+      }
+    </>
+  }
+
     //TODO: Info das ações de dados
     return (
         <div className="popup-box">
@@ -79,12 +131,13 @@ const InfoForm = ({nodes, handleClose, editComponent, getName}) => {
             {!editing ?
             <><b><h2>Informações sobre o componente</h2></b><br/>
             <b>Nome do componente: </b>{getName(node)}<br/>
-              {node.data.parameterOptions !== "" ?<>
+              {node.data.parameterOptions.length > 0 ? <>
                 <br/><b><label htmlFor="text">Opções:</label></b>
                 <ul>{component.data.parameterOptions.map((option) => <li key={option}> {option}
                 </li>)}</ul></> : null}
             {node.data.dataType !== "" ? <><br/><b>Tipo de Dados: </b>{node.data.dataType}<br/></> : ''}
             {node.data.dataType !== "" && options.length !== 0 ? <><br/><b>Especificação dos Dados: </b>{node.data.dataExplain.map(option => <li key={keyCounter++}> {option} </li>)}<br/></> : ''}
+            {node.data.actions.length !== 0 ? showActions(node.data.actions) : ''}
             <br/>
             </>
             : 

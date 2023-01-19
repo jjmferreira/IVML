@@ -2,8 +2,7 @@ import cor from "../imagens/Cor.PNG"
 import tamanho from "../imagens/Tamanho.PNG"
 import forma from "../imagens/Forma.PNG"
 import {NodeToolbar, Position} from "reactflow";
-import {FaInfo, FaPlus, FaTrashAlt} from "react-icons/fa";
-import {NodeResizer} from "@reactflow/node-resizer";
+import {FaTrashAlt} from "react-icons/fa";
 
 
 
