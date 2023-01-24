@@ -20,7 +20,6 @@ import {FaTrashAlt} from "react-icons/fa";
 function Grafico({data, selected}) {
 
     const switchVariable = () => {
-      console.log(data)
         switch(data.graphType){
           case "Área": return (<img src={area} alt="test" className='graph-node'></img>)
           case "Barras": return (<img src={barras} alt="test" className='graph-node'></img>)
@@ -39,7 +38,7 @@ function Grafico({data, selected}) {
           case "Relógio": return (<img src={relogio} alt="test" className='graph-node'></img>)
           case "Tabela": return (<img src={tabela} alt="test" className='graph-node'></img>)
         }
-      } 
+      }
   return (
     <div>
       <div>

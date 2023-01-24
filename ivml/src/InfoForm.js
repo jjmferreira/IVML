@@ -1,23 +1,23 @@
 import { useState } from "react";
-import {FaTimes} from "react-icons/fa";
+import {FaTimes, FaArrowLeft, FaPencilAlt, FaChevronDown, FaChevronUp} from "react-icons/fa";
 
-const InfoForm = ({nodes, edges, handleClose, editComponent, getName}) => {
+const InfoForm = ({nodes, edges, selectedNode, editComponent, getName}) => {
 
-  const node = nodes.find(node => node.selected);
 
-  const [component, setComponent] = useState(JSON.parse(JSON.stringify(node))); //copy node
+  const [component, setComponent] = useState(selectedNode !== undefined ? JSON.parse(JSON.stringify(selectedNode)): null); //copy node
   const [editing, setEditing] = useState(false);
   const [optionName, setOptionName] = useState("");
-  const [options, setOptions] = useState(node.data.dataExplain);
+  const [options, setOptions] = useState(selectedNode.data.dataExplain);
   const [paramOptions, setParamOptions] = useState([]);
+  const [openActions, setOpenActions] = useState(false);
 
   let keyCounter = 0;
 
   const resetChanges = () => {
     setOptionName("");
-    setOptions(node.data.dataExplain);
-    setParamOptions(node.data.parameterOptions);
-    setComponent(JSON.parse(JSON.stringify(node))); //copy node
+    setOptions(selectedNode.data.dataExplain);
+    setParamOptions(selectedNode.data.parameterOptions);
+    setComponent(JSON.parse(JSON.stringify(selectedNode))); //copy node
     setEditing(false);
   }
 
@@ -72,7 +72,7 @@ const InfoForm = ({nodes, edges, handleClose, editComponent, getName}) => {
   const getTargets = (interaction) => {
     let currentTargetsID = [];
     edges.map((edge) => {
-      if(interaction.id === edge.data && edge.source === node.id){
+      if(interaction.id === edge.data && edge.source === selectedNode.id){
         console.log(edge.data + " Edge data " + interaction.id)
         currentTargetsID = [...currentTargetsID, edge.target]
       }
@@ -96,11 +96,11 @@ const InfoForm = ({nodes, edges, handleClose, editComponent, getName}) => {
       }
     })
     return <>
-      {clique.length !== 0 ? <><br/><b>Interações de clique:</b><br/><br/></> : ''}
+      {clique.length !== 0 ? <><b>Interações de clique:</b><br/><br/></> : ''}
       {clique.map((act) => <>      
         <b>Nome do interação: </b>{act.name}<br/>
         <b>Resultado da interação: </b>{act.result}<br/>
-        <b>Componente afetados: </b>
+        <b>Componente(s) afetado(s): </b>
             {console.log(act)}
             <ul>
               {getTargets(act).map(targetid => <li key={targetid}> {getName(nodes.find(node => node.id === targetid))}</li>)}
@@ -111,7 +111,7 @@ const InfoForm = ({nodes, edges, handleClose, editComponent, getName}) => {
       {hover.map((act) => <>      
         <b>Nome do interação: </b>{act.name}<br/>
         <b>Resultado da interação: </b>{act.result}<br/>
-        <b>Componente afetados: </b>
+        <b>Componente(s) afetado(s): </b>
         {console.log(act)}
             <ul>
               {getTargets(act).map(targetid => <li key={targetid}> {getName(nodes.find(node => node.id === targetid))}</li>)}
@@ -123,32 +123,29 @@ const InfoForm = ({nodes, edges, handleClose, editComponent, getName}) => {
 
     //TODO: Info das ações de dados
     return (
-        <div className="popup-box">
           <div className="box">
-            
-            {editing ? <><button onClick={() => resetChanges()}>Voltar atrás!</button></>
-                : <><button className="editButton" onClick={() => setEditing(true)}>Editar</button></>}
             {!editing ?
-            <><b><h2>Informações sobre o componente</h2></b><br/>
-            <b>Nome do componente: </b>{getName(node)}<br/>
-              {node.data.parameterOptions.length > 0 ? <>
+            <><b><h2>Informações sobre o componente <FaPencilAlt style={{alignItems: "center", cursor: "pointer"}} onClick={() => setEditing(true)}/></h2></b>
+            <b>Nome do componente: </b>{getName(selectedNode)}<br/>
+              {selectedNode.data.parameterOptions.length > 0 ? <>
                 <br/><b><label htmlFor="text">Opções:</label></b>
                 <ul>{component.data.parameterOptions.map((option) => <li key={option}> {option}
                 </li>)}</ul></> : null}
-            {node.data.dataType !== "" ? <><br/><b>Tipo de Dados: </b>{node.data.dataType}<br/></> : ''}
-            {node.data.dataType !== "" && options.length !== 0 ? <><br/><b>Especificação dos Dados: </b>{node.data.dataExplain.map(option => <li key={keyCounter++}> {option} </li>)}<br/></> : ''}
-            {node.data.actions.length !== 0 ? showActions(node.data.actions) : ''}
-            <br/>
+            {selectedNode.data.dataType !== "" ? <><br/><b>Tipo de Dados: </b>{selectedNode.data.dataType}<br/></> : ''}
+            {selectedNode.data.dataType !== "" && options.length !== 0 ? <><br/><b>Especificação dos Dados: </b>{selectedNode.data.dataExplain.map(option => <li key={keyCounter++}> {option} </li>)}<br/></> : ''}
+            {selectedNode.data.actions.length !== 0 ? <>
+              <h4 style={{cursor:"pointer"}} onClick={() => setOpenActions(!openActions)}>Ver Interações {openActions ? <FaChevronUp/> : <FaChevronDown/>}</h4>
+                {openActions ? showActions(selectedNode.data.actions) : null}</> : ''}
             </>
             : 
-            <><b><h2>Editar componente</h2></b>
+            <><b><h2><FaArrowLeft style={{alignItems: "center", cursor: "pointer"}} onClick={() => resetChanges()}/> Editar componente</h2></b><br/>
               <b><label htmlFor="text">Título: </label></b>
             <input id="text" type="text" 
               defaultValue={component.data.name} onChange={(e) => (component.data.name = e.target.value)}/>
             <br/><br/>
-            {node.type === "dados" ? <>
+            {selectedNode.type === "dados" ? <>
             <b><label htmlFor="text">Tipo dos Dados:</label></b>
-            <select name="category" defaultValue={node.data.dataType} onChange={(e) => {component.data.datatype = e.target.value}}>
+            <select name="category" defaultValue={selectedNode.data.dataType} onChange={(e) => {component.data.datatype = e.target.value}}>
                     <option value="DEFAULT" disabled>Escolher...</option>
                     <option value="Binário">Binário</option>
                     <option value="Contínuo">Contínuo</option>
@@ -159,7 +156,7 @@ const InfoForm = ({nodes, edges, handleClose, editComponent, getName}) => {
             </select>
              <br/><br/>{handleDataSpec()}
             </>
-            : node.type === "parametro" ? <>
+            : selectedNode.type === "parametro" ? <>
                       <b><label htmlFor="text">Opções:</label></b>
                         <ul>
                           {component.data.parameterOptions.map((option) => <li key={option}> {option}
@@ -169,16 +166,13 @@ const InfoForm = ({nodes, edges, handleClose, editComponent, getName}) => {
                         <input id="text" type="text" onChange={(e) => setOptionName(e.target.value)}/>
                         <button onClick={addParamOption}> Adicionar!</button>
                     </>
-            : ""}
-              <button className="closeButton" 
-              onClick={() => {editComponent(component); setEditing(false)}}> Guardar Alterações!</button>
-
-            </>      
+            : ""}<br/>
+              <button onClick={() => {editComponent(component); setEditing(false)}}> Guardar Alterações!</button>
+            <br/><br/></>
             }
-            <><button className="closeButtonTop" onClick={handleClose}> Fechar!</button></>
-            <br></br><br></br>
+            {/*<><button className="closeButtonTop" onClick={handleClose}> Fechar!</button></>*/}
+            <hr/>
           </div>
-        </div>
       );
 }
 

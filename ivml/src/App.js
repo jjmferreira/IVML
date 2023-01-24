@@ -1,6 +1,6 @@
 import React, {useCallback, useState} from 'react';
 import ReactFlow, { addEdge, applyEdgeChanges, applyNodeChanges,
-  ReactFlowProvider, useReactFlow} from 'reactflow';
+  ReactFlowProvider, useReactFlow, useOnSelectionChange} from 'reactflow';
 import { SmartStepEdge } from '@tisoap/react-flow-smart-edge';
 import 'reactflow/dist/style.css';
 
@@ -19,6 +19,7 @@ import './components/componentes.css';
 import CriarComponente from './CriarComponente';
 import CriarInteracao from './CriarInteracao';
 import InfoForm from './InfoForm';
+import Sidebar from "./Sidebar";
 
 const edgeTypes = {
   default: SmartStepEdge,
@@ -51,13 +52,13 @@ function App() {
   const [edges, setEdges] = useState(initialEdges);
 
   //CREATE - Criar componente | INTERACTION - Adicionar interacao | Info - Ver detalhes do componente
-  const [openForm, setOpenForm] = useState("");
+  const [openForm, setOpenForm] = useState(""); //TODO: DELETE
 
   //Variável para passar o id do parent node
   const [parentNode, setParentNode] = useState("");
 
   //Variável para passar o nó do componente de partida
-  const [interactionSource, setInteractionSource] = useState('')
+  const [interactionSource, setInteractionSource] = useState('') //TODO: DELETE
 
   /** Save and export flow **/
   //save
@@ -135,18 +136,27 @@ function App() {
     [setEdges]
   );
 
-
+  /** This hook lets you listen to selection changes */
+  useOnSelectionChange({
+    onChange: ({ nodes, edges }) => {
+      let selected = nodes.find(node => node.selected)
+      if (selected === undefined)
+        selected = "";
+      if (parentNode.id !== selected.id)
+        setParentNode(selected);
+    },
+  });
 
   const createNode = (node) => {
-    setParentNode("");
+    console.log(node);
+    //setParentNode("");
     if (node === undefined || node.type === ''){
-      alert('Undefined Component; Choose a type')
+      alert('Escolha um tipo de componente')
       return;
     }
-    //tirar selecao de todos os outros nodes
-    nodes.filter(n => n.selected === true).map(n => n.selected = false);
+
     //adicionar novo node
-    let n = node;
+    let n = JSON.parse(JSON.stringify(node));
     n.id = nodes.length === 0 ? "0" : "" + (parseInt(nodes[nodes.length-1].id)+1);
     const components = nodes.filter(nd => nd.type === node.type);
     const lastIndex = components.length === 0 ? "0" : "" +(parseInt(components[components.length-1].id)+1);
@@ -171,7 +181,6 @@ function App() {
       counter++;
     });
     setEdges([...edges, ...eds]);
-    closeWindow();
   }
 
   const deleteActionFromNode = (eds) => {
@@ -197,12 +206,14 @@ function App() {
     }
   }
 
+  //TODO: DELETE
   const closeWindow = () => {
     setOpenForm("");
     setParentNode("");
     setInteractionSource("")
   }
- 
+
+  //TODO: Remover opções INFO/CREATE/INTERACTION e da TOOLBAR dos components
  const iconsSetUp = (click, node) => {
   let buttonName = click.target.name;
     switch(buttonName){
@@ -227,24 +238,33 @@ function App() {
  }
 
   return (<>
-    <div className='side'><ReactFlow
-      nodes={nodes}
-      edges={edges}
-      edgeTypes={edgeTypes}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      nodeTypes={nodeTypes}
-      onNodeClick={(event, node) => iconsSetUp(event, node)}
-      fitView
-      style={rfStyle}    
-      onInit={setRfInstance}
-      onEdgesDelete={(edges) => deleteActionFromNode(edges)}
-      deleteKeyCode={'Delete'}
-    >
+    <div className='side'>
+      <Sidebar
+        nodes={nodes}
+        edges={edges}
+        createComp={createNode}
+        selected={parentNode}
+        editNode={editNode}
+        getName={nodeLabel}
+        createAction={createInteraction}/>
+        <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        edgeTypes={edgeTypes}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        nodeTypes={nodeTypes}
+        onNodeClick={(event, node) => iconsSetUp(event, node)}
+        fitView
+        style={rfStyle}
+        onInit={setRfInstance}
+        onEdgesDelete={(edges) => deleteActionFromNode(edges)}
+        deleteKeyCode={'Delete'}>
       <div className="header">
+        {/* //TODO: DELETE
         <button style={{position: "absolute", top: '10px', left:"10px"}}
-                onClick={() => {setOpenForm("CREATE")}}>Criar Componente</button>
+                onClick={() => {setOpenForm("CREATE")}}>Criar Componente</button>*/}
         <div className="save__controls">
           <button onClick={onSave}>Guardar</button>
           <button onClick={onRestore}>Restaurar</button>
@@ -253,7 +273,8 @@ function App() {
         </div>
       </div>
     </ReactFlow>
-    {openForm === "CREATE" ? <CriarComponente
+      {/* //TODO: DELETE
+      {openForm === "CREATE" ? <CriarComponente
     parent={parentNode}
     createComp={createNode}
     handleClose = {closeWindow}
@@ -274,7 +295,7 @@ function App() {
     actionsDone={createInteraction}
     getName={nodeLabel}
     handleClose = {closeWindow}
-    /> : "" }
+    /> : "" }*/}
     </div>
     
     </>

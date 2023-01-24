@@ -154,7 +154,7 @@
 
 .wrapper {
   display: grid;
-  grid-template-columns: repeat(4, 1fr)
+  grid-template-columns: repeat(3, 1fr)
 }
 .item {
   border-radius: 20px;
@@ -174,9 +174,23 @@
 }
 
 .side {
-  display: inline-flex;
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
   height: 100%;
   width: 100%;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 40vh;
+  padding: 20px;
+  background: whitesmoke;
+  box-shadow: 1px 0 4px grey;
+  z-index: 1;
+  overflow-y: auto;
+  white-space: break-spaces;
 }
 
 .corner-element {
@@ -240,8 +254,8 @@
 }
 
 .editButton{
-  position: absolute;
-  bottom: 35px;
+  display: inline-flex;
+  justify-self: end;
 }
 
 .t{

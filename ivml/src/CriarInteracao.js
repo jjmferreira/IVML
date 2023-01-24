@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import {MarkerType} from "reactflow";
 import {FaTimes} from "react-icons/fa";
 
-const CriarInteracao = ({source, nodes, edges, handleClose, actionsDone, getName}) => {
+const CriarInteracao = ({source, nodes, edges, actionsDone, getName}) => {
 
   const [actionName, setActionName] = useState("");
   const [targetComponents, setTargetComponents] = useState([]);
@@ -10,34 +10,56 @@ const CriarInteracao = ({source, nodes, edges, handleClose, actionsDone, getName
   const [sourceIcon, setSourceIcon] = useState("");
 
   const [newInteractionFormat, setNewInteractionFormat] = useState("");
-  const [selectedInteraction, setSelectedInteraction] = useState();
+  const [selectedInteraction, setSelectedInteraction] = useState("");
   const [t, setT] = useState()
+
+  useEffect(() => {
+    clearForm();
+  }, [source])
+
+  const clearForm = () => {
+    const options = document.getElementsByName("selected")
+    for(const option of options)
+      option.checked = false;
+    setNewInteractionFormat("");
+    setSelectedInteraction("")
+    setTargetComponents([]);
+    setTargetComponents([]);
+    setActionName("");
+  }
 
   const createAction = () =>{
     if(actionName === ""){
-      alert('An interaction must have a name!')
+      alert('O nome da interação é obrigatório')
     } else if(targetComponents.length === 0){
-      alert('You need to choose the target components!')
+      alert('Pelo menos um componente afetado devará ser afetado pela interação')
     }else{
       if(source.data.actions.find(a => a.name === actionName)){
-        alert('That action alreay exist! Choose a diferent name')
+        alert('Já existe uma interação com esse nome. Altere o nome ou escolha a opção "Selecionar existente"')
       }else{
         const action = {id: source.data.actions.length, name:actionName, result: actionResult, trigger: sourceIcon}
         source.data.actions.push(action);
-        let edges = [];
-        targetComponents.map(target => {
-          edges = [...edges, { id: '', source: source.id, target: target, data: action.id, markerEnd: { type: MarkerType.Arrow },
-            animated:true, sourceHandle: sourceIcon}];
-        })
-        actionsDone(source, edges)
+        extendAction(action);
       }
     } 
     
   }
 
+  const extendAction = (action) => {
+    let edges = [];
+    targetComponents.map(target => {
+      edges = [...edges, { id: '', source: source.id, target: target, data: action.id, markerEnd: { type: MarkerType.Arrow },
+        animated:true, sourceHandle: sourceIcon}];
+    })
+    actionsDone(source, edges);
+    clearForm();
+  }
+
   
-  const addTargetComponent = (targetID) =>{
-    if(!targetComponents.includes(targetID)){
+  const addTargetComponent = () =>{
+    const targetID = document.getElementById("targets").value;
+    if(!targetComponents.includes(targetID) &&
+        (selectedInteraction === "" || !getTargets(selectedInteraction).includes(targetID))){
       setTargetComponents([...targetComponents, targetID])
     }
   }
@@ -51,8 +73,7 @@ const CriarInteracao = ({source, nodes, edges, handleClose, actionsDone, getName
   const getTargets = (interaction) => {
     let currentTargetsID = [];
     edges.map((edge) => {
-      if(interaction.id === edge.data){
-        
+      if(edge.source === source.id && interaction.id === edge.data){
         currentTargetsID = [...currentTargetsID, edge.target]
       }
     })
@@ -61,15 +82,13 @@ const CriarInteracao = ({source, nodes, edges, handleClose, actionsDone, getName
   
 
     return (
-    <div className="popup-box">
+    <div><hr/>
         <div className="box">
-          <button className="closeButtonTop" onClick={handleClose}>x</button>
           <h2>Adicionar Interação</h2>
-          <br></br>
-          <div key={"newOrExist"} onChange={event => setNewInteractionFormat(event.target.value)} className="item">
-              <b><input type="radio" name="selected" value={"Nova"}/>{"Nova Interação!"}</b>
-              <b><input type="radio" name="selected" value={"Existente"}/>{"Ação Existente!"}</b>
-              <br></br><br></br>
+          <div key={"newOrExist"} onChange={event => {setNewInteractionFormat(event.target.value); setSelectedInteraction("");}} className="item">
+              <b><input type="radio" name="selected" value={"Nova"}/>{"Criar "}</b>
+              <b><input type="radio" disabled={source.data.actions.length === 0} name="selected" value={"Existente"}/>{"Selecionar Existente"}</b>
+              <br/><br/>
           </div>
           {newInteractionFormat === "Nova" ? <>
           
@@ -98,20 +117,20 @@ const CriarInteracao = ({source, nodes, edges, handleClose, actionsDone, getName
           <br/><br/>
           <b><label htmlFor="text">Componentes Afetados:</label></b>
           <br/> <br/>
-          <select name="category" defaultValue={'DEFAULT'} onChange={event => {addTargetComponent(event.target.value)}}>
-          <option value="DEFAULT" disabled>Escolher componente(s)...</option>
+          <select id="targets" name="category" defaultValue={'DEFAULT'} >
+          <option value="DEFAULT" disabled>Escolher...</option>
               {nodes.map((node) => (
                 node.type !== "varvisual" && node.type !== "grafico" ?              
                 <option key={node.id} value={node.id}>
                   {getName(node)}
                 </option> : ''
             ))}
-          </select>
+          </select><button onClick={() => {addTargetComponent()}}>Adicionar</button>
           <ul>
           {targetComponents.map(targetC => <li key={targetC}> {getName(nodes.find(node => node.id === targetC))} 
           <button onClick={() => deleteTargetComp(targetC)} > <FaTimes pointerEvents={'none'}/></button> </li>)}
           </ul>
-          <button className="formButton" onClick={createAction}> Criar interação!</button><br/>
+          <button onClick={createAction}> Criar interação!</button>
           </>  : 
           newInteractionFormat === "Existente" ?
           <>
@@ -125,26 +144,37 @@ const CriarInteracao = ({source, nodes, edges, handleClose, actionsDone, getName
                 </option>
             ))}
           </select>
-          { selectedInteraction !== undefined ?
+          { selectedInteraction !== "" ?
           <>
             <br></br><br></br>
-            <b><label htmlFor="text"> Tipo de Interação: {selectedInteraction.trigger}</label></b>
+            <b><label htmlFor="text"> Tipo de Interação: </label></b>{selectedInteraction.trigger}
             <br></br><br></br>
-            <b><label htmlFor="text"> Resultado da Interação: {selectedInteraction.result}</label></b>
+            <b><label htmlFor="text"> Resultado da Interação: </label></b>{selectedInteraction.result}
             <br></br><br></br>
-            <b><label htmlFor="text"> Componentes afetados: </label></b>
+            <b><label htmlFor="text"> Componentes afetados: </label></b><br/><br/>
+            <select id="targets" name="category" defaultValue={'DEFAULT'} >
+              <option value="DEFAULT" disabled>Escolher...</option>
+              {nodes.map((node) => (
+                  node.type !== "varvisual" && node.type !== "grafico" ?
+                      <option key={node.id} value={node.id}>
+                        {getName(node)}
+                      </option> : ''
+              ))}
+            </select><button onClick={() => {addTargetComponent()}}>Adicionar</button>
             <ul>
               {getTargets(selectedInteraction).map(targetid => <li key={targetid}> {getName(nodes.find(node => node.id === targetid))}</li>)}
+              {targetComponents.map(targetC => <li key={targetC}> {getName(nodes.find(node => node.id === targetC))}
+                <button onClick={() => deleteTargetComp(targetC)} > <FaTimes pointerEvents={'none'}/></button> </li>)}
             </ul>
-            <b><label htmlFor="text">Componentes não afetados:</label></b>
+            {/*<b><label htmlFor="text">Componentes não afetados:</label></b>
             <br/> <br/>
             <select name="category" defaultValue={'DEFAULT'} onChange={event => {setT(event.target.value)}}>
             <option value="DEFAULT" disabled>Escolher componente(s)...</option>
                 {nodes.filter((node) => !getTargets(selectedInteraction).includes(node.id)).map(
                   (n) =><option key={n.id} value={n.id}>{getName(n)}</option>
                 )}
-            </select>
-            <button className="formButton" onClick={console.log(t)}> Adicionar componente!</button><br/>
+            </select>*/}
+            <button onClick={() => extendAction(selectedInteraction)}> Editar Interação!</button><br/>
           </> : console.log("Nao selecionou")
           }
           

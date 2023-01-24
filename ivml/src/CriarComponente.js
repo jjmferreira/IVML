@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import area from "./imagens/Gráficos/Área.PNG";
 import barras from "./imagens/Gráficos/Barras.PNG";
 import barrasEmp from "./imagens/Gráficos/Barras Empilhadas.PNG";
@@ -17,7 +17,7 @@ import tabela from "./imagens/Gráficos/Tabela.PNG";
 import texto from "./imagens/Gráficos/Texto.PNG";
 import {FaTimes} from "react-icons/fa";
 
-const CriarComponente = ({handleClose, createComp, parent}) => {
+const CriarComponente = ({createComp, parent}) => {
 
     const extent = parent !== "" ? 'parent' : '';
 
@@ -25,7 +25,7 @@ const CriarComponente = ({handleClose, createComp, parent}) => {
         graphType: '', dataExplain: [], parameterOptions: '', actions: []};
 
     const [node, setNode] = useState({ id: '', type: '', position:{ x: 50, y: 50 }, data: nodeData,
-        parentNode: parent === undefined ? "" : parent.id, extent:extent, selected: true});
+        parentNode: parent === undefined ? "" : parent.id, extent:extent});
 
     const [componentType, setComponentType] = useState('');
 //    const [varType, setVarType] = useState();
@@ -39,6 +39,7 @@ const CriarComponente = ({handleClose, createComp, parent}) => {
         mapaCoropletico, multiLinhas, pontos, relogio, tabela, texto];
 
     const changeComponentType = (type) => {
+        console.log(node);
         //reset
         node.data.dataType = '';
         node.data.dataExplain = [];
@@ -77,12 +78,11 @@ const CriarComponente = ({handleClose, createComp, parent}) => {
         node.data.varName = type;
         node.data.name = type;
         setNode(node);
-        console.log(node)
     }
 
     const changeGraphType = (type) => {
-        console.log("Tipo " + type)
         node.data.graphType = type;
+        node.data.name = "Gráfico de " + type;
         setNode(node);
     }
 
@@ -155,32 +155,39 @@ const CriarComponente = ({handleClose, createComp, parent}) => {
         return allowed;
     }
 
-  return (
-    <div className="popup-box">
-      <div className="box">
-        <button className="closeButtonTop" onClick={handleClose}>x</button>
-          <h2>Criar Componente</h2>
+    useEffect(() => {
+        //reset form
+        const select = document.getElementById("componentType");
+        if (select !== null) {
+            select.value = "DEFAULT";
+            setComponentType("");
+        }
+    }, [parent])
+
+  return componentsAllowed().length === 0 ? null :
+      (<div className="box">
+          <h2>{parent === "" ? "Criar Componente" : "Adicionar Componente"}</h2>
           <b><label htmlFor="text">Tipo: </label></b>
-          <select name="category" defaultValue={"DEFAULT"} onChange={(event) => changeComponentType(event.target.value)}>
+          <select id="componentType" name="category" defaultValue={"DEFAULT"} onChange={(event) => changeComponentType(event.target.value)}>
               <option disabled value={"DEFAULT"} >Escolher...</option>
               {componentsAllowed().map(type => <option key={type.value} value={type.value} >{type.name}</option>)}
           </select>
 
-          <br></br><br></br>
+          <br/><br/>
           {/*detail by component type*/}
-          {componentType === "varvisual" ? <div className="wrapper">
+          {componentType === "varvisual" ? <div className="item" onChange={event => changeVarType(event.target.value)} >
                 {vars.map((varType) => (
-                    <div key={varType} onChange={event => changeVarType(event.target.value)} className="item">
-                        <input type="radio" name="selected" value={varType}/>{varType}</div>
+                        <><input key={varType} type="radio" name="selected" value={varType}/>{varType} </>
                 ))}
-            </div> :
+            <br/><br/></div> :
             componentType === "grafico" ?
                 <div className="wrapper">
                     {graficos.map((grafico) => (
                         <div key={grafico.id} onChange={event => changeGraphType(event.target.value)} className="item">
-                            <img src={grafico} alt={grafico} /><br/>
+                            <img style={{width:"70px", height: "60px"}} src={grafico} alt={grafico} /><br/>
+                            <input type="radio" name="selected" value={grafico.split("media/")[1].split(".")[0]}/>
                             <label>{grafico.split("media/")[1].split(".")[0]}</label>
-                            <input type="radio" name="selected" value={grafico.split("media/")[1].split(".")[0]}/></div>
+                            </div>
                     ))}
                 </div>
                 : <div><b><label htmlFor="text">Título do componente:</label></b>
@@ -222,8 +229,7 @@ const CriarComponente = ({handleClose, createComp, parent}) => {
                   </li>)}
               </ul>
               </div> : null}
-            <button className="formButton" onClick={() => {createComp(node)}}> Criar componente!</button><br/>
-      </div>
+            <button  onClick={() => {createComp(node)}}> Criar componente!</button><br/><br/>
     </div>
   );
 };
