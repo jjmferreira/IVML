@@ -14,11 +14,10 @@ const Visualizacao = ({data, selected}) => {
 
   return (
     <>
-      <div className="vis-node" >
+      <div className="dashboard-node" >
         <NodeToolbar className="node-toolbar" isVisible={selected} position={Position.Top}>
             <button title="Informação do Componente" name="Info"> <FaInfo pointerEvents={'none'}/> </button>
             <button title="Eliminar Componente" name="Remove" > <FaTrashAlt style={{color: 'red'}} pointerEvents={'none'}/></button>
-
         </NodeToolbar>
         <NodeResizer color="#307DBB" isVisible={selected} minWidth={100} minHeight={75} />
              <Handle className="handle_clique" type="source" position={Position.Right} id="Clique" style={handleVisibility("Clique")}/>

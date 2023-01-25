@@ -13,12 +13,10 @@ import Botao from './components/Botao';
 import Parametro from './components/Parametro';
 import Grafico from "./components/Grafico";
 import VarVisuais from './components/VariavelVisual';
+import Dashboard from './components/Dashboard'
 
 
 import './components/componentes.css';
-import CriarComponente from './CriarComponente';
-import CriarInteracao from './CriarInteracao';
-import InfoForm from './InfoForm';
 import Sidebar from "./Sidebar";
 
 const edgeTypes = {
@@ -29,7 +27,7 @@ const edgeTypes = {
 // we define the nodeTypes outside of the component to prevent re-renderings
 // you could also use useMemo inside the component
 const nodeTypes = { dados: Dados, visualizacao: Visualizacao, legenda: Legenda, filtro: Filtro,
-  titulo: Titulo, varvisual: VarVisuais, grafico: Grafico, botao: Botao, parametro: Parametro};
+  titulo: Titulo, varvisual: VarVisuais, grafico: Grafico, botao: Botao, parametro: Parametro, dashboard: Dashboard};
 
 const initialNodes = [
   //{ id: 'node-1', type: 'visUpdater', position: { x: 0, y: 0 }, data: { name: 'Tratamento', datatype: 'Arbitrário'}},
@@ -51,14 +49,10 @@ function App() {
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
 
-  //CREATE - Criar componente | INTERACTION - Adicionar interacao | Info - Ver detalhes do componente
-  const [openForm, setOpenForm] = useState(""); //TODO: DELETE
 
   //Variável para passar o id do parent node
   const [parentNode, setParentNode] = useState("");
 
-  //Variável para passar o nó do componente de partida
-  const [interactionSource, setInteractionSource] = useState('') //TODO: DELETE
 
   /** Save and export flow **/
   //save
@@ -148,8 +142,6 @@ function App() {
   });
 
   const createNode = (node) => {
-    console.log(node);
-    //setParentNode("");
     if (node === undefined || node.type === ''){
       alert('Escolha um tipo de componente')
       return;
@@ -163,7 +155,8 @@ function App() {
     if(n.type !== "titulo" && n.type !== "dados" && n.type !== "varvisual" && n.type !== "grafico")
       n.data.compCounter = node.type.substr(0,1).toUpperCase() + lastIndex;
     setNodes([...nodes, n]);
-    setOpenForm("");
+
+    return n;
   }
 
   function editNode(node){
@@ -182,6 +175,17 @@ function App() {
     });
     setEdges([...edges, ...eds]);
   }
+
+  const createNavigation = (newNode, source, edge) => {
+    let n = createNode(newNode);
+    const idx = nodes.findIndex(n => n.id === source.id); //find index of node to edit
+    setNodes([...nodes.slice(0, idx), source, ...nodes.slice(idx+1), n]); //replace nodes[idx] with edited node
+    let counter = edges.length === 0 ? 0 : parseInt(edges[edges.length-1].id)+1;
+    edge.id = '' + counter;
+    edge.target = '' + n.id;
+    setEdges([...edges, edge]);
+  }
+
 
   const deleteActionFromNode = (eds) => {
     eds.map(edge => {
@@ -206,32 +210,14 @@ function App() {
     }
   }
 
-  //TODO: DELETE
-  const closeWindow = () => {
-    setOpenForm("");
-    setParentNode("");
-    setInteractionSource("")
-  }
-
   //TODO: Remover opções INFO/CREATE/INTERACTION e da TOOLBAR dos components
  const iconsSetUp = (click, node) => {
   let buttonName = click.target.name;
     switch(buttonName){
-      case "Info":
-        setOpenForm("INFO");
-        break;
-      case "Add":
-        setOpenForm("CREATE");
-        setParentNode(node);
-        break;
       case "Remove":
         const result = nodes.filter((n) => (n.id !== node.id) && (n.parentNode !== node.id));
         setNodes(result);
         setEdges(edges.filter((ed) => (result.includes(n => n.id === ed.source || n.id === ed.target))));
-        break;
-      case "Interação":
-        setOpenForm("INTERACTION");
-        setInteractionSource(node.id);
         break;
       default: return;
     } 
@@ -246,7 +232,8 @@ function App() {
         selected={parentNode}
         editNode={editNode}
         getName={nodeLabel}
-        createAction={createInteraction}/>
+        createAction={createInteraction}
+        createNavigation={createNavigation}/>
         <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -262,9 +249,6 @@ function App() {
         onEdgesDelete={(edges) => deleteActionFromNode(edges)}
         deleteKeyCode={'Delete'}>
       <div className="header">
-        {/* //TODO: DELETE
-        <button style={{position: "absolute", top: '10px', left:"10px"}}
-                onClick={() => {setOpenForm("CREATE")}}>Criar Componente</button>*/}
         <div className="save__controls">
           <button onClick={onSave}>Guardar</button>
           <button onClick={onRestore}>Restaurar</button>
@@ -273,29 +257,6 @@ function App() {
         </div>
       </div>
     </ReactFlow>
-      {/* //TODO: DELETE
-      {openForm === "CREATE" ? <CriarComponente
-    parent={parentNode}
-    createComp={createNode}
-    handleClose = {closeWindow}
-    />: "" }
-    
-    {openForm === "INFO" && nodes.filter(n => n.selected === true).length > 0 ? <InfoForm
-      nodes={nodes}
-      edges={edges}
-      handleClose = {closeWindow}
-      editComponent={editNode}
-      getName={nodeLabel}
-    /> : "" }
-    {openForm === "INTERACTION" && nodes.filter(n => n.selected === true).length > 0 ? <CriarInteracao
-    source={nodes.find(n => n.id === interactionSource)}
-    nodes={nodes.filter((node) => node.parentNode === "" ||
-        (node.parentNode !== interactionSource && node.type !== 'grafico' && node.type !== 'varVisual'))}
-    edges={edges.filter(edge => edge.source === interactionSource)}
-    actionsDone={createInteraction}
-    getName={nodeLabel}
-    handleClose = {closeWindow}
-    /> : "" }*/}
     </div>
     
     </>
