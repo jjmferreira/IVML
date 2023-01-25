@@ -193,6 +193,24 @@
   white-space: break-spaces;
 }
 
+.tab{
+  background: white;
+  padding: 6px;
+  width: 12vh;
+  border: 1px solid grey;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  cursor: pointer;
+}
+
+.tab:hover{
+  background: lightgrey;
+}
+
+.tab-selected{
+  background: lightgrey;
+}
+
 .corner-element {
   width: 15px;
   height: 15px;

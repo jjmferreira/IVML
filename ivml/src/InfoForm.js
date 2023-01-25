@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {FaTimes, FaArrowLeft, FaPencilAlt, FaChevronDown, FaChevronUp} from "react-icons/fa";
 
 const InfoForm = ({nodes, edges, selectedNode, editComponent, getName}) => {
@@ -95,8 +95,8 @@ const InfoForm = ({nodes, edges, selectedNode, editComponent, getName}) => {
         default: return;
       }
     })
-    return <>
-      {clique.length !== 0 ? <><b>Interações de clique:</b><br/><br/></> : ''}
+    return <><div style={{border:"1px solid lightgrey", paddingLeft:"12px", paddingRight:"12px"}}>
+      {clique.length !== 0 ? <><h3> Interações de clique:</h3></> : ''}
       {clique.map((act) => <>      
         <b>Nome do interação: </b>{act.name}<br/>
         <b>Resultado da interação: </b>{act.result}<br/>
@@ -107,7 +107,8 @@ const InfoForm = ({nodes, edges, selectedNode, editComponent, getName}) => {
             </ul>
         </>)
       }
-      {hover.length !== 0 ? <><br/><b>Interações de Hover:</b><br/><br/></>: ''}
+      {clique.length > 0 && hover.length > 0 ? <hr/> : null}
+      {hover.length !== 0 ? <><h3> Interações de Hover:</h3></>: ''}
       {hover.map((act) => <>      
         <b>Nome do interação: </b>{act.name}<br/>
         <b>Resultado da interação: </b>{act.result}<br/>
@@ -118,10 +119,9 @@ const InfoForm = ({nodes, edges, selectedNode, editComponent, getName}) => {
             </ul>
         </>)
       }
-    </>
+    </div></>
   }
 
-    //TODO: Info das ações de dados
     return (
           <div className="box">
             {!editing ?
@@ -134,8 +134,10 @@ const InfoForm = ({nodes, edges, selectedNode, editComponent, getName}) => {
             {selectedNode.data.dataType !== "" ? <><br/><b>Tipo de Dados: </b>{selectedNode.data.dataType}<br/></> : ''}
             {selectedNode.data.dataType !== "" && options.length !== 0 ? <><br/><b>Especificação dos Dados: </b>{selectedNode.data.dataExplain.map(option => <li key={keyCounter++}> {option} </li>)}<br/></> : ''}
             {selectedNode.data.actions.length !== 0 ? <>
-              <h4 style={{cursor:"pointer"}} onClick={() => setOpenActions(!openActions)}>Ver Interações {openActions ? <FaChevronUp/> : <FaChevronDown/>}</h4>
-                {openActions ? showActions(selectedNode.data.actions) : null}</> : ''}
+              <br/><button style={{width:"100%", display:"inline-grid"}} className={"tab"} onClick={() => setOpenActions(!openActions)}>
+                Ver Interações {openActions ? <FaChevronUp style={{position:"absolute", justifySelf:"end"}}/>
+                : <FaChevronDown style={{position:"absolute", justifySelf:"end"}}/>}</button>
+                {openActions ? showActions(selectedNode.data.actions) : null}</> : <><br/><hr/></>}
             </>
             : 
             <><b><h2><FaArrowLeft style={{alignItems: "center", cursor: "pointer"}} onClick={() => resetChanges()}/> Editar componente</h2></b><br/>
@@ -171,7 +173,6 @@ const InfoForm = ({nodes, edges, selectedNode, editComponent, getName}) => {
             <br/><br/></>
             }
             {/*<><button className="closeButtonTop" onClick={handleClose}> Fechar!</button></>*/}
-            <hr/>
           </div>
       );
 }

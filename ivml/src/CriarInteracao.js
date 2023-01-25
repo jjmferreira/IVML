@@ -82,15 +82,14 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName}) => {
   
 
     return (
-    <div><hr/>
+    <div>
         <div className="box">
-          <h2>Adicionar Interação</h2>
           <div key={"newOrExist"} onChange={event => {setNewInteractionFormat(event.target.value); setSelectedInteraction("");}} className="item">
               <b><input type="radio" name="selected" value={"Nova"}/>{"Criar "}</b>
               <b><input type="radio" disabled={source.data.actions.length === 0} name="selected" value={"Existente"}/>{"Selecionar Existente"}</b>
-              <br/><br/>
+              <br/>
           </div>
-          {newInteractionFormat === "Nova" ? <>
+          {newInteractionFormat === "Nova" ? <><br/>
           
           <div><b><label htmlFor="text">Nome da interação: </label></b>
               <input id="text" type="text" onChange={(e) => setActionName(e.target.value)}/>
@@ -133,7 +132,7 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName}) => {
           <button onClick={createAction}> Criar interação!</button>
           </>  : 
           newInteractionFormat === "Existente" ?
-          <>
+          <><br/>
           <b><label htmlFor="text">Interações de {getName(source)}:</label></b>
           <br/> <br/>
           <select name="category" defaultValue={'DEFAULT'} onChange={event => {setSelectedInteraction(source.data.actions.find(action => action.name === event.target.value))}}>

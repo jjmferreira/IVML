@@ -166,7 +166,7 @@ const CriarComponente = ({createComp, parent}) => {
 
   return componentsAllowed().length === 0 ? null :
       (<div className="box">
-          <h2>{parent === "" ? "Criar Componente" : "Adicionar Componente"}</h2>
+          {parent === "" ? <h2>Criar Componente</h2> : null}
           <b><label htmlFor="text">Tipo: </label></b>
           <select id="componentType" name="category" defaultValue={"DEFAULT"} onChange={(event) => changeComponentType(event.target.value)}>
               <option disabled value={"DEFAULT"} >Escolher...</option>
@@ -229,7 +229,7 @@ const CriarComponente = ({createComp, parent}) => {
                   </li>)}
               </ul>
               </div> : null}
-            <button  onClick={() => {createComp(node)}}> Criar componente!</button><br/><br/>
+            <button  onClick={() => {createComp(node)}}> Criar componente!</button><br/>
     </div>
   );
 };
