@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {FaTimes, FaArrowLeft, FaPencilAlt, FaChevronDown, FaChevronUp} from "react-icons/fa";
 
 const InfoForm = ({nodes, edges, selectedNode, editComponent, getName}) => {
@@ -121,6 +121,8 @@ const InfoForm = ({nodes, edges, selectedNode, editComponent, getName}) => {
       }
     </div></>
   }
+
+  useEffect(() => setOpenActions(false), [selectedNode]);
 
     return (
           <div className="box">
