@@ -3,7 +3,7 @@ import CriarComponente from "./CriarComponente";
 import InfoForm from "./InfoForm";
 import CriarInteracao from "./CriarInteracao";
 
-const Sidebar = ({createComp, nodes, selected, edges, getName, editNode, createAction}) => {
+const Sidebar = ({createComp, nodes, selected, edges, getName, editNode, createAction, createNavigation}) => {
 
     const allowsInteractions = selected !== "" && selected.type !== "varvisual" && selected.type !== "grafico";
 
@@ -12,7 +12,7 @@ const Sidebar = ({createComp, nodes, selected, edges, getName, editNode, createA
         {selected !== "" ? <>
             <InfoForm editComponent={editNode} edges={edges} nodes={nodes} getName={getName} selectedNode={selected}/>
             <CriarComponente createComp={createComp} parent={selected}/>
-            {allowsInteractions ? <CriarInteracao getName={getName} edges={edges} nodes={nodes} source={selected} actionsDone={createAction}/> : null}
+            {allowsInteractions ? <CriarInteracao getName={getName} edges={edges} nodes={nodes} source={selected} actionsDone={createAction} createNav={createNavigation}/> : null}
             </> : <CriarComponente createComp={createComp} parent={""}/>}
         {/*<div><div className="box-header"><b>Dashboard</b></div><hr/> {createLayout(nodes, selectNode)}</div>
         {selected !== undefined ? (
