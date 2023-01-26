@@ -28,8 +28,6 @@ const CriarComponente = ({createComp, parent}) => {
         parentNode: parent === undefined ? "" : parent.id, extent:extent});
 
     const [componentType, setComponentType] = useState('');
-//    const [varType, setVarType] = useState();
-//    const [graphType, setGraphType] = useState();
     const [dataType, setDataType] = useState();
     const [option, setOption] = useState();
     const [dataOptions, setDataOptions] = useState([]);
@@ -53,7 +51,6 @@ const CriarComponente = ({createComp, parent}) => {
                 node.data.dataExplain = dataOptions;
                 break;
             case "varvisual":
-                //node.data.varName = varType;
                 node.data.name = 'var';
                 break;
             case "grafico":
@@ -74,7 +71,6 @@ const CriarComponente = ({createComp, parent}) => {
     }
 
     const changeVarType = (type) => {
-        //node.data.varType = type;
         node.data.varName = type;
         node.data.name = type;
         setNode(node);
@@ -95,11 +91,16 @@ const CriarComponente = ({createComp, parent}) => {
     }
 
     const addDataOption = () => {
-        if (!dataOptions.includes(option)) {
-            node.data.dataExplain = [...dataOptions, option];
-            setNode(node);
-            setDataOptions([...dataOptions, option])
+        if(option === undefined){
+            alert("Option can't be blank!")
+        } else{
+            if (!dataOptions.includes(option)) {
+                node.data.dataExplain = [...dataOptions, option];
+                setNode(node);
+                setDataOptions([...dataOptions, option])
+            }
         }
+        
     }
 
     const deleteDataOption = (option) => {
@@ -110,10 +111,14 @@ const CriarComponente = ({createComp, parent}) => {
     }
 
     const addParamOption = () => {
-        if (!paramOptions.includes(option)) {
+        if(option === undefined){
+            alert("Option can't be blank!")
+        }else {
+            if (!paramOptions.includes(option)) {
             node.data.parameterOptions = [...paramOptions, option];
             setNode(node);
             setParamOptions([...paramOptions, option])
+            }
         }
     }
 
@@ -126,7 +131,7 @@ const CriarComponente = ({createComp, parent}) => {
 
     //TODO: No caso do filtro e parâmetro, criar logo 1 único componente de dados
     const componentsAllowed = () => {
-        const vis = {value: "visualizacao", name: "Vizualização"};
+        const vis = {value: "visualizacao", name: "Visualização"};
         const botao = {value: "botao", name: "Botão"};
         const filtro = {value: "filtro", name: "Filtro"};
         const legenda = {value: "legenda", name: "Legenda"};

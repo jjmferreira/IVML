@@ -15,8 +15,6 @@ function Legenda({data, selected}) {
     <div className="rect-node" >
         <NodeToolbar className="node-toolbar" isVisible={selected} position={Position.Top}>
             <button title="Informação do Componente" name="Info"> <FaInfo pointerEvents={'none'}/> </button>
-            <button title="Adicionar Sub-Componente" name="Add" > Adicionar </button>
-            <button title="Nova Interação" name="Interação"> Nova interação</button>
             <button title="Eliminar Componente" name="Remove" > <FaTrashAlt style={{color: 'red'}} pointerEvents={'none'}/></button>
         </NodeToolbar>
         <NodeResizer color="#307DBB" isVisible={selected} minWidth={75} minHeight={25} />

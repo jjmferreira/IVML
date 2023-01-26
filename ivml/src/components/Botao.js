@@ -16,7 +16,6 @@ function Botao({data, selected}) {
     <div className="button-node">
         <NodeToolbar className="node-toolbar" isVisible={selected} position={Position.Top}>
             <button title="Informação do Componente" name="Info"> <FaInfo pointerEvents={'none'}/> </button>
-            <button title="Nova Interação" name="Interação"> Nova interação</button>
             <button title="Eliminar Componente" name="Remove" > <FaTrashAlt style={{color: 'red'}} pointerEvents={'none'}/></button>
         </NodeToolbar>
         <NodeResizer color="#307DBB" isVisible={selected} minWidth={50} minHeight={25} />

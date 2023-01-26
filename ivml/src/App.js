@@ -14,6 +14,7 @@ import Parametro from './components/Parametro';
 import Grafico from "./components/Grafico";
 import VarVisuais from './components/VariavelVisual';
 import Dashboard from './components/Dashboard'
+import Link from './components/Link'
 
 
 import './components/componentes.css';
@@ -27,7 +28,7 @@ const edgeTypes = {
 // we define the nodeTypes outside of the component to prevent re-renderings
 // you could also use useMemo inside the component
 const nodeTypes = { dados: Dados, visualizacao: Visualizacao, legenda: Legenda, filtro: Filtro,
-  titulo: Titulo, varvisual: VarVisuais, grafico: Grafico, botao: Botao, parametro: Parametro, dashboard: Dashboard};
+  titulo: Titulo, varvisual: VarVisuais, grafico: Grafico, botao: Botao, parametro: Parametro, dashboard: Dashboard, link:Link};
 
 const initialNodes = [
   //{ id: 'node-1', type: 'visUpdater', position: { x: 0, y: 0 }, data: { name: 'Tratamento', datatype: 'Arbitrário'}},
@@ -145,13 +146,18 @@ function App() {
     if (node === undefined || node.type === ''){
       alert('Escolha um tipo de componente')
       return;
+    } else if (node.type === "dados" && node.data.name === ''){
+      alert('You cant create a data component without name')
+      return;
     }
+    
 
     //adicionar novo node
     let n = JSON.parse(JSON.stringify(node));
     n.id = nodes.length === 0 ? "0" : "" + (parseInt(nodes[nodes.length-1].id)+1);
     const components = nodes.filter(nd => nd.type === node.type);
-    const lastIndex = components.length === 0 ? "0" : "" +(parseInt(components[components.length-1].id)+1);
+    console.log("Componentes: " + components)
+    const lastIndex = components.length === 0 ? "0" : "" + components.length;
     if(n.type !== "titulo" && n.type !== "dados" && n.type !== "varvisual" && n.type !== "grafico")
       n.data.compCounter = node.type.substr(0,1).toUpperCase() + lastIndex;
     setNodes([...nodes, n]);
@@ -202,7 +208,8 @@ function App() {
       return node.data.compCounter;
     } else {
       let string = nodeName === '' ? "Componente de " + node.type : nodeName;
-      if(node.parentNode !== ""){
+      if(node.parentNode !== undefined && node.parentNode !== ""){
+        console.log(node.parentNode)
         const parentNode = nodes.find(n => n.id === node.parentNode);
         string += " (em " + parentNode.data.compCounter + ")";
       }

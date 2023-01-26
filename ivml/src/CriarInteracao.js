@@ -93,10 +93,15 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
   
   const addTargetComponent = () =>{
     const targetID = document.getElementById("targets").value;
-    if(!targetComponents.includes(targetID) &&
+    if(targetID === "DEFAULT"){
+      alert("You didn't choose an option!")
+    } else{
+      if(!targetComponents.includes(targetID) &&
         (selectedInteraction === "" || !getTargets(selectedInteraction).includes(targetID))){
       setTargetComponents([...targetComponents, targetID])
     }
+    }
+    
   }
 
   const deleteTargetComp = (target) => {
@@ -150,11 +155,12 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
           <br/><br/>
           <b><label htmlFor="text">Resultado da Interação: </label></b>
             <br/><br/>
-          <select name="category" defaultValue={'DEFAULT'} onChange={event => setActionResult(event.target.value)}>
+          <select name="category" defaultValue={'DEFAULT'} onChange={event => {setActionResult(event.target.value); setTargetComponents([])}}>
             <option value="DEFAULT" disabled>Escolher resultado...</option>
             <option>Filtragem</option>
             <option>Destaque</option>
             <option>Dashboard</option>
+            <option>Link</option>
           </select>
           <br/> <br/>
           {actionResult === "" || actionResult === "Filtragem" || actionResult === "Destaque" ?
@@ -181,7 +187,7 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
           <select id="targets" name="category" defaultValue={'DEFAULT'} >
           <option value="DEFAULT" disabled>Escolher...</option>
               {nodes.map((node) => (
-                node.type === "dashboard" ?              
+                node.type === actionResult.toLocaleLowerCase() ?              
                 <option key={node.id} value={node.id}>
                   {getName(node)}
                 </option> : ''
@@ -192,7 +198,7 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
           <button onClick={() => deleteTargetComp(targetC)} > <FaTimes pointerEvents={'none'}/></button> </li>)}
           </ul>
           {!hasTarget() ? <>
-          <b><label htmlFor="text">Título do componente:</label></b>
+          {actionResult === 'Dashboard' ? <b><label htmlFor="text">Título do componente:</label></b> : <b><label htmlFor="text">Link:</label></b>}
           <input id="text" type="text" onChange={(e) => setNewCompName(e.target.value)}/>
           <br/><br/>
           </> : ""} 
@@ -237,7 +243,7 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
             <select id="targets" name="category" defaultValue={'DEFAULT'} >
               <option value="DEFAULT" disabled>Escolher...</option>
               {nodes.map((node) => (
-                  node.type === "dashboard" ?
+                  node.type === selectedInteraction.result.toLocaleLowerCase() ?
                       <option key={node.id} value={node.id}>
                         {getName(node)}
                       </option> : ''
@@ -250,7 +256,7 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
                 <button onClick={() => deleteTargetComp(targetC)} > <FaTimes pointerEvents={'none'}/></button> </li>)}
             </ul>
             <button onClick={() => extendAction(selectedInteraction)}> Editar Interação!</button><br/>
-          </> : console.log("Nao selecionou")
+          </> : ""
           }
           
           </> : ""

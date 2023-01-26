@@ -20,11 +20,8 @@ function Dados({data, selected}) {
         <NodeResizer color="#307DBB" isVisible={selected} minWidth={20} minHeight={20} />
         <Handle className="handle_clique" type="source" position={Position.Right} id="Clique" style={handleVisibility("Clique")}/>
         <Handle className="handle_hover" type="source" position={Position.Right} id="Hover" style={handleVisibility("Hover")}/>
-        {/*<small><b>{data.name}</b></small>*/}
         <small className='text-margin'><b>{data.name}</b></small>
-        {/*<img src={testImage} alt="test"></img>*/}
-        {/*<small><small><small>Tipo dos dados: {data.datatype}</small></small></small> */}
-        {<Handle type="source" position={Position.Bottom} id="a" style={{visibility: 'hidden'}} /> }
+        {<Handle type="target" position={Position.Bottom} id="a" style={{visibility: 'hidden'}} /> }
     </div>
   );
 }

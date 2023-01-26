@@ -44,10 +44,8 @@ const InfoForm = ({nodes, edges, selectedNode, editComponent, getName}) => {
   }
 
   const deleteParamOption = (option) => {
-    if(option !== ""){
       component.data.parameterOptions = paramOptions.filter(op => op !== option);
       setParamOptions(paramOptions.filter(op => op !== option));
-    }
   }
 
   const handleDataSpec = () => {
@@ -174,7 +172,6 @@ const InfoForm = ({nodes, edges, selectedNode, editComponent, getName}) => {
               <button onClick={() => {editComponent(component); setEditing(false)}}> Guardar Alterações!</button>
             <br/><br/></>
             }
-            {/*<><button className="closeButtonTop" onClick={handleClose}> Fechar!</button></>*/}
           </div>
       );
 }
