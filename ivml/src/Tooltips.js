@@ -14,7 +14,7 @@ const Tooltips = ({nodes, parent, getName, createTooltip, eliminateTooltip}) => 
     //Set new data name value
     const [toCreate, setToCreate] = useState(false)
     const [newDataName, setNewDataName] = useState('');
-    const [newNamesList, setNewNamesList] = useState([]);
+    const [newNamesList, setNewNamesList] = useState(parent.data.tooltip !== '' ? parent.data.tooltip.dataComps : []);
 
     //PROBLEMA QUANDO SAO DE LSITAS DIFERETNTES -> DATACMPS
 
@@ -34,40 +34,31 @@ const Tooltips = ({nodes, parent, getName, createTooltip, eliminateTooltip}) => 
         const targetID = document.getElementById("targets").value;
         if(targetID === "DEFAULT"){
           alert("You didn't choose an option!")
-        } else if (targetID === "Outro"){
-          if(!newNamesList.includes(newDataName) && newDataName !== ""){
-            setNewNamesList([...newNamesList, newDataName]);
-            setNewDataName("");
+        } if(!newNamesList.includes(newDataName)){
+            if(targetID === "Outro" ){
+              if(newDataName !== ""){
+                setNewNamesList([...newNamesList, newDataName]);
+                setNewDataName("");
+              } else{
+                alert('The data component must have a name!')
+              }
+            } else{
+              setNewNamesList([...newNamesList, targetID]);
+              setNewDataName("");
+            }
           }
-        } else{
-          if(!targetData.includes(targetID)){
-          setTargetData([...targetData, targetID])
-        }
-        }
         
       }
     
       const deleteTargetComp = (target) => {
         if(target !== ""){
-          setTargetData(targetData.filter(t => t !== target));
           setNewNamesList(newNamesList.filter(t => t !== target));
-
         }
       }
 
-      const getDataCompNames = () => {
-        
-        let listNames = [];
-        targetData.map(target =>{
-            listNames = [...listNames, getName(nodes.find(node => node.id === target))]
-        })
-        return listNames;
-      }
-
       const createTool = () => {
-        let fullList = [...getDataCompNames(), ...newNamesList];
         tooltip.title = title;
-        tooltip.dataComps = fullList;
+        tooltip.dataComps = newNamesList;
         tooltip.description = description;
         setTooltip([tooltip]);
         createTooltip(tooltip, parent);
@@ -76,7 +67,6 @@ const Tooltips = ({nodes, parent, getName, createTooltip, eliminateTooltip}) => 
       const eliminateTool = () => {
         document.getElementById("targets").value = "DEFAULT"
         setNewTitle('');
-        setTargetData([]);
         setNewNamesList([]);
         setNewDataName('')
         setDescription('');
@@ -98,7 +88,7 @@ const Tooltips = ({nodes, parent, getName, createTooltip, eliminateTooltip}) => 
                     <select id="targets" name="category" defaultValue={'DEFAULT'} onChange={e => e.target.value === "Outro" ? setToCreate(true) : setToCreate(false)}>
                     <option value="DEFAULT" disabled>Escolher...</option>
                         {getDataChilds().map((dataN) => (            
-                            <option key={dataN.id} value={dataN.id}>
+                            <option key={dataN.id} value={getName(dataN)}>
                             {getName(dataN)}
                             </option>
                         ))}
@@ -113,8 +103,6 @@ const Tooltips = ({nodes, parent, getName, createTooltip, eliminateTooltip}) => 
                     </> : ""}
                     {' '}<Button onClick={() => {addTargetComponent()}} variant="outline-success">Adicionar</Button>
                     <ul>
-                    {targetData.map(targetC => <li key={targetC}> {getName(nodes.find(node => node.id === targetC) )} 
-                    <button onClick={() => deleteTargetComp(targetC)} > <FaTimes pointerEvents={'none'}/></button> </li>)}
                     {newNamesList.map(newData => <li key={newData}> {newData} 
                     <button onClick={() => deleteTargetComp(newData)} > <FaTimes pointerEvents={'none'}/></button> </li>)}
                     </ul>
