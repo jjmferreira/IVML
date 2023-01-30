@@ -204,7 +204,7 @@
 .sidebar {
   display: flex;
   flex-direction: column;
-  width: 40vh;
+  width: 45vh;
   padding: 20px;
   background: whitesmoke;
   box-shadow: 1px 0 4px grey;
@@ -232,8 +232,10 @@
 }
 
 .corner-element {
-  width: 15px;
-  height: 15px;
+  width: fit-content;
+  height: fit-content;
+  padding-left: 2px;
+  padding-right: 2px;
   background: rgb(255, 172, 19);
   position: absolute;
   top: 5px;

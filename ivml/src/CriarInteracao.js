@@ -134,8 +134,8 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
     <div>
         <div className="box">
           <div key={"newOrExist"} onChange={event => {setNewInteractionFormat(event.target.value); setSelectedInteraction("");}} className="item">
-              <b><input type="radio" name="selected" value={"Nova"}/>{"Criar "}</b>
-              <b><input type="radio" disabled={source.data.actions.length === 0} name="selected" value={"Existente"}/>{"Selecionar Existente"}</b>
+              <b><input type="radio" name="selected" value={"Nova"}/>{" Criar "} </b>
+              <b><input type="radio" disabled={source.data.actions.length === 0} name="selected" value={"Existente"}/>{" Selecionar Existente"}</b>
               <br/>
           </div>
           {newInteractionFormat === "Nova" ? <><br/>
@@ -169,7 +169,7 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
           <>
           <b><label htmlFor="text">Componentes Afetados:</label></b>
           <br/> <br/>
-          <select id="targets" name="category" defaultValue={'DEFAULT'} >
+          <select id="targets" style={{width: "18vh"}} name="category" defaultValue={'DEFAULT'} >
           <option value="DEFAULT" disabled>Escolher...</option>
               {nodes.map((node) => (
                 node.type !== "varvisual" && node.type !== "grafico" && node.type !== "dashboard" ?              
@@ -178,16 +178,16 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
                 </option> : ''
             ))}
           </select>
-          {' '}<Button onClick={() => {addTargetComponent()}} variant="outline-success">Adicionar</Button>
+          {' '}<Button onClick={() => {addTargetComponent()}} variant="outline-secondary">Adicionar</Button>
           <ul>
           {targetComponents.map(targetC => <li key={targetC}> {getName(nodes.find(node => node.id === targetC))} 
           <button onClick={() => deleteTargetComp(targetC)} > <FaTimes pointerEvents={'none'}/></button> </li>)}
           </ul>
-          <Button onClick={createAction} variant="outline-secondary">Criar interação!</Button>{' '}
+          <Button onClick={createAction} variant="secondary">Criar interação!</Button>{' '}
           </> : 
           <>
           <div>
-          <select id="targets" name="category" defaultValue={'DEFAULT'} >
+          <select id="targets" style={{maxWidth: "20vh"}} name="category" defaultValue={'DEFAULT'} >
           <option value="DEFAULT" disabled>Escolher...</option>
               {nodes.map((node) => (
                 node.type === actionResult.toLocaleLowerCase() ?              
@@ -195,7 +195,7 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
                   {getName(node)}
                 </option> : ''
             ))}
-          </select>{' '}<Button onClick={() => {addTargetComponent()}} variant="outline-success">Adicionar</Button>
+          </select>{' '}<Button onClick={() => {addTargetComponent()}} variant="outline-secondary">Adicionar</Button>
           <ul>
           {targetComponents.map(targetC => <li key={targetC}> {getName(nodes.find(node => node.id === targetC))} 
           <button onClick={() => deleteTargetComp(targetC)} > <FaTimes pointerEvents={'none'}/></button> </li>)}
@@ -213,7 +213,8 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
           <><br/>
           <b><label htmlFor="text">Interações de {getName(source)}:</label></b>
           <br/> <br/>
-          <select name="category" defaultValue={'DEFAULT'} onChange={event => {setSelectedInteraction(source.data.actions.find(action => action.name === event.target.value))}}>
+          <select name="category" style={{maxWidth: "30vh"}} defaultValue={'DEFAULT'}
+                  onChange={event => {setSelectedInteraction(source.data.actions.find(action => action.name === event.target.value))}}>
           <option value="DEFAULT" disabled>Escolher interação...</option>
               {source.data.actions.map((action) => (            
                 <option key={action.id} value={action.name}>
@@ -231,7 +232,7 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
             {selectedInteraction.result !== "Dashboard" && selectedInteraction.result !== "Link" ? 
             <>
             <b><label htmlFor="text"> Componentes afetados: </label></b><br/><br/>
-            <select id="targets" name="category" defaultValue={'DEFAULT'} >
+            <select id="targets" style={{maxWidth: "20vh"}} name="category" defaultValue={'DEFAULT'} >
               <option value="DEFAULT" disabled>Escolher...</option>
               {nodes.map((node) => (
                   node.type !== "varvisual" && node.type !== "grafico" && node.type !== "dashboard"?
@@ -239,11 +240,11 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
                         {getName(node)}
                       </option> : ''
               ))}
-            </select>{' '}<Button onClick={() => {addTargetComponent()}} variant="outline-success">Adicionar</Button>
+            </select>{' '}<Button onClick={() => {addTargetComponent()}} variant="outline-secondary">Adicionar</Button>
             </> : 
             <>
             <b><label htmlFor="text"> Componentes afetados: </label></b><br/><br/>
-            <select id="targets" name="category" defaultValue={'DEFAULT'} >
+            <select id="targets" style={{maxWidth: "20vh"}} name="category" defaultValue={'DEFAULT'} >
               <option value="DEFAULT" disabled>Escolher...</option>
               {nodes.map((node) => (
                   node.type === selectedInteraction.result.toLocaleLowerCase() ?
@@ -258,7 +259,7 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
               {targetComponents.map(targetC => <li key={targetC}> {getName(nodes.find(node => node.id === targetC))}
                 <button onClick={() => deleteTargetComp(targetC)} > <FaTimes pointerEvents={'none'}/></button> </li>)}
             </ul>
-            <button onClick={() => extendAction(selectedInteraction)}> Editar Interação!</button><br/>
+            <Button variant={"secondary"} onClick={() => extendAction(selectedInteraction)}> Editar Interação!</Button><br/>
           </> : ""
           }
           

@@ -93,8 +93,9 @@ const InfoForm = ({nodes, edges, selectedNode, editComponent, getName}) => {
         default: return;
       }
     })
+
     return <><div style={{border:"1px solid lightgrey", paddingLeft:"12px", paddingRight:"12px"}}>
-      {clique.length !== 0 ? <><h3> Interações de clique:</h3></> : ''}
+      {clique.length !== 0 ? <><h5> Interações de clique:</h5></> : ''}
       {clique.map((act) => <>      
         <b>Nome do interação: </b>{act.name}<br/>
         <b>Resultado da interação: </b>{act.result}<br/>
@@ -106,7 +107,7 @@ const InfoForm = ({nodes, edges, selectedNode, editComponent, getName}) => {
         </>)
       }
       {clique.length > 0 && hover.length > 0 ? <hr/> : null}
-      {hover.length !== 0 ? <><h3> Interações de Hover:</h3></>: ''}
+      {hover.length !== 0 ? <><h5> Interações de Hover:</h5></>: ''}
       {hover.map((act) => <>      
         <b>Nome do interação: </b>{act.name}<br/>
         <b>Resultado da interação: </b>{act.result}<br/>
@@ -120,19 +121,25 @@ const InfoForm = ({nodes, edges, selectedNode, editComponent, getName}) => {
     </div></>
   }
 
-  useEffect(() => setOpenActions(false), [selectedNode]);
+  useEffect(() => {
+    //reset values
+    setOpenActions(false);
+    setEditing(false);
+    setComponent(selectedNode !== undefined ? JSON.parse(JSON.stringify(selectedNode)): null)
+  }, [selectedNode]);
 
     return (
           <div className="box">
             {!editing ?
-            <><b><h2>Informações sobre o componente <FaPencilAlt style={{alignItems: "center", cursor: "pointer"}} onClick={() => setEditing(true)}/></h2></b>
-            <b>Nome do componente: </b>{getName(selectedNode)}<br/>
+            <><b><h3>Informações sobre o componente <FaPencilAlt style={{alignItems: "center", cursor: "pointer"}} onClick={() => setEditing(true)}/></h3></b>
+            <br/><b>Nome do componente: </b>{getName(selectedNode)}<br/>
               {selectedNode.data.parameterOptions.length > 0 ? <>
                 <br/><b><label htmlFor="text">Opções:</label></b>
                 <ul>{component.data.parameterOptions.map((option) => <li key={option}> {option}
                 </li>)}</ul></> : null}
-            {selectedNode.data.dataType !== "" ? <><br/><b>Tipo de Dados: </b>{selectedNode.data.dataType}<br/></> : ''}
-            {selectedNode.data.dataType !== "" && options.length !== 0 ? <><br/><b>Especificação dos Dados: </b>{selectedNode.data.dataExplain.map(option => <li key={keyCounter++}> {option} </li>)}<br/></> : ''}
+            {selectedNode.type === "dados " ? <><br/><b>Tipo de Dados: </b>{selectedNode.data.dataType}<br/>
+                  {options.length !== 0 ? <><br/><b>Especificação dos Dados: </b>
+                    {selectedNode.data.dataExplain.map(option => <li key={keyCounter++}> {option} </li>)}<br/></> : ''}</> : null}
             {selectedNode.data.actions.length !== 0 ? <>
               <br/><button style={{width:"100%", display:"inline-grid"}} className={"tab"} onClick={() => setOpenActions(!openActions)}>
                 Ver Interações {openActions ? <FaChevronUp style={{position:"absolute", justifySelf:"end"}}/>
