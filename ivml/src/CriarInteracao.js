@@ -1,6 +1,8 @@
 import {useEffect, useState} from 'react';
 import {MarkerType} from "reactflow";
 import {FaTimes} from "react-icons/fa";
+import Button from 'react-bootstrap/Button';
+
 
 const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav}) => {
 
@@ -16,7 +18,7 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
 
 
   const nodeData = { name: '', datatype: '', compCounter: '', varName: '',
-  graphType: '', dataExplain: [], parameterOptions: '', actions: []};
+  graphType: '', dataExplain: [], parameterOptions: '', actions: [], tooltip:''};
 
   const [node, setNode] = useState({ id: '', type: '', position:{ x: 50, y: 50 }, data: nodeData,
   parentNode: "", extent: ''});
@@ -175,12 +177,13 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
                   {getName(node)}
                 </option> : ''
             ))}
-          </select><button onClick={() => {addTargetComponent()}}>Adicionar</button>
+          </select>
+          {' '}<Button onClick={() => {addTargetComponent()}} variant="outline-success">Adicionar</Button>
           <ul>
           {targetComponents.map(targetC => <li key={targetC}> {getName(nodes.find(node => node.id === targetC))} 
           <button onClick={() => deleteTargetComp(targetC)} > <FaTimes pointerEvents={'none'}/></button> </li>)}
           </ul>
-          <button onClick={createAction}> Criar interação!</button>
+          <Button onClick={createAction} variant="outline-secondary">Criar interação!</Button>{' '}
           </> : 
           <>
           <div>
@@ -192,7 +195,7 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
                   {getName(node)}
                 </option> : ''
             ))}
-          </select><button onClick={() => {addTargetComponent()}}>Adicionar</button>
+          </select>{' '}<Button onClick={() => {addTargetComponent()}} variant="outline-success">Adicionar</Button>
           <ul>
           {targetComponents.map(targetC => <li key={targetC}> {getName(nodes.find(node => node.id === targetC))} 
           <button onClick={() => deleteTargetComp(targetC)} > <FaTimes pointerEvents={'none'}/></button> </li>)}
@@ -202,7 +205,7 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
           <input id="text" type="text" onChange={(e) => setNewCompName(e.target.value)}/>
           <br/><br/>
           </> : ""} 
-          <button onClick={createNavigation}> Criar interação!</button>         
+          <Button onClick={createNavigation} variant="outline-secondary">Criar interação!</Button>{' '}      
           </div>
           </>  } 
           </>: 
@@ -236,7 +239,7 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
                         {getName(node)}
                       </option> : ''
               ))}
-            </select><button onClick={() => {addTargetComponent()}}>Adicionar</button>
+            </select>{' '}<Button onClick={() => {addTargetComponent()}} variant="outline-success">Adicionar</Button>
             </> : 
             <>
             <b><label htmlFor="text"> Componentes afetados: </label></b><br/><br/>

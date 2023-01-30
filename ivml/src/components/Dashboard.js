@@ -20,13 +20,13 @@ const Visualizacao = ({data, selected}) => {
             <button title="Eliminar Componente" name="Remove" > <FaTrashAlt style={{color: 'red'}} pointerEvents={'none'}/></button>
         </NodeToolbar>
         <NodeResizer color="#307DBB" isVisible={selected} minWidth={100} minHeight={75} />
-             <Handle className="handle_clique" type="source" position={Position.Right} id="Clique" style={handleVisibility("Clique")}/>
-             <Handle className="handle_hover" type="source" position={Position.Right} id="Hover" style={handleVisibility("Hover")}/>
+             <Handle className="handle_clique" type="source" position={Position.Right} id="Clique" style={handleVisibility("Clique")} isConnectable={false}/>
+             <Handle className="handle_hover" type="source" position={Position.Right} id="Hover" style={handleVisibility("Hover")} isConnectable={false}/>
         <div className='corner-element'>{data.compCounter}  </div>
         <div className='componentNameStyle'>
             <b>{data.name}</b>
         </div>
-        {<Handle type="target" position={Position.Left} id="a" style={{visibility: 'hidden'}} /> }
+        {<Handle type="target" position={Position.Left} id="a" style={{visibility: 'hidden'}} isConnectable={false}/> }
       </div>
     </>
     

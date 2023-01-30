@@ -2,8 +2,9 @@ import React, {useEffect, useState} from "react";
 import CriarComponente from "./CriarComponente";
 import InfoForm from "./InfoForm";
 import CriarInteracao from "./CriarInteracao";
+import Tooltips from "./Tooltips";
 
-const Sidebar = ({createComp, nodes, selected, edges, getName, editNode, createAction, createNavigation}) => {
+const Sidebar = ({createComp, nodes, selected, edges, getName, editNode, createAction, createNavigation, createTooltip, eliminateTooltip}) => {
 
     const allowsInteractions = selected !== "" && selected.type !== "varvisual" && selected.type !== "grafico";
     const allowsSubComponents = allowsInteractions && selected.type !== "dados" && selected.type !== "botão" && selected.type !== "parametro";
@@ -29,7 +30,7 @@ const Sidebar = ({createComp, nodes, selected, edges, getName, editNode, createA
             </div>
             <div style={{border:"1px solid lightgrey", padding:"12px"}}>
                 {tab === "component" ? <CriarComponente createComp={createComp} parent={selected}/>
-                : tab === "tooltip" ? <>TODO</>
+                : tab === "tooltip"  && selected.type === "visualizacao" ? <Tooltips nodes={nodes} parent={selected} getName={getName} createTooltip={createTooltip} eliminateTooltip={eliminateTooltip} />
                 : allowsInteractions && tab === "interaction" ?
                         <CriarInteracao getName={getName} edges={edges} nodes={nodes}
                                         source={selected} actionsDone={createAction} createNav={createNavigation}/> : null}

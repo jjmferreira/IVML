@@ -3,6 +3,7 @@ import ReactFlow, { addEdge, applyEdgeChanges, applyNodeChanges,
   ReactFlowProvider, useReactFlow, useOnSelectionChange} from 'reactflow';
 import { SmartStepEdge } from '@tisoap/react-flow-smart-edge';
 import 'reactflow/dist/style.css';
+import 'bootstrap/dist/css/bootstrap.css';
 
 import Dados from './components/Dados';
 import Visualizacao from './components/Visualizacao';
@@ -15,6 +16,12 @@ import Grafico from "./components/Grafico";
 import VarVisuais from './components/VariavelVisual';
 import Dashboard from './components/Dashboard'
 import Link from './components/Link'
+
+
+import AlertMessage from './components/AlertMessage';
+//Bootstrap
+import Alert from 'react-bootstrap/Alert';
+
 
 
 import './components/componentes.css';
@@ -53,6 +60,8 @@ function App() {
 
   //Variável para passar o id do parent node
   const [parentNode, setParentNode] = useState("");
+
+
 
 
   /** Save and export flow **/
@@ -144,8 +153,8 @@ function App() {
 
   const createNode = (node) => {
     if (node === undefined || node.type === ''){
-      alert('Escolha um tipo de componente')
-      return;
+      //alert('Escolha um tipo de componente')
+      return <AlertMessage isValid={true}/>;
     } else if (node.type === "dados" && node.data.name === ''){
       alert('You cant create a data component without name')
       return;
@@ -156,7 +165,6 @@ function App() {
     let n = JSON.parse(JSON.stringify(node));
     n.id = nodes.length === 0 ? "0" : "" + (parseInt(nodes[nodes.length-1].id)+1);
     const components = nodes.filter(nd => nd.type === node.type);
-    console.log("Componentes: " + components)
     const lastIndex = components.length === 0 ? "0" : "" + components.length;
     if(n.type !== "titulo" && n.type !== "dados" && n.type !== "varvisual" && n.type !== "grafico")
       n.data.compCounter = node.type.substr(0,1).toUpperCase() + lastIndex;
@@ -182,15 +190,33 @@ function App() {
     setEdges([...edges, ...eds]);
   }
 
+
   const createNavigation = (newNode, source, edge) => {
     let n = createNode(newNode);
-    const idx = nodes.findIndex(n => n.id === source.id); //find index of node to edit
-    setNodes([...nodes.slice(0, idx), source, ...nodes.slice(idx+1), n]); //replace nodes[idx] with edited node
+    if(nodes.find(nde => nde.id === n.id) === undefined){
+      const idx = nodes.findIndex(n => n.id === source.id); //find index of node to edit
+      setNodes([...nodes.slice(0, idx), source, ...nodes.slice(idx+1), n]); //replace nodes[idx] with edited node
+    } else{
+      editNode(source);
+    }
     let counter = edges.length === 0 ? 0 : parseInt(edges[edges.length-1].id)+1;
     edge.id = '' + counter;
     edge.target = '' + n.id;
     setEdges([...edges, edge]);
   }
+
+  const createTooltip = (tooltip, parent) =>{
+    let n = nodes.find(n => n.id === parent.id);
+    n.data.tooltip = tooltip;
+    editNode(n);
+  }
+
+  const eliminateTooltip = (parent) =>{
+    let n = nodes.find(n => n.id === parent.id);
+    n.data.tooltip = '';
+    editNode(n);
+  }
+
 
 
   const deleteActionFromNode = (eds) => {
@@ -209,7 +235,6 @@ function App() {
     } else {
       let string = nodeName === '' ? "Componente de " + node.type : nodeName;
       if(node.parentNode !== undefined && node.parentNode !== ""){
-        console.log(node.parentNode)
         const parentNode = nodes.find(n => n.id === node.parentNode);
         string += " (em " + parentNode.data.compCounter + ")";
       }
@@ -240,7 +265,9 @@ function App() {
         editNode={editNode}
         getName={nodeLabel}
         createAction={createInteraction}
-        createNavigation={createNavigation}/>
+        createNavigation={createNavigation}
+        createTooltip={createTooltip}
+        eliminateTooltip={eliminateTooltip}/>
         <ReactFlow
         nodes={nodes}
         edges={edges}

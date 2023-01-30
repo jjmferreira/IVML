@@ -16,13 +16,15 @@ import relogio from "./imagens/Gráficos/Relógio.PNG";
 import tabela from "./imagens/Gráficos/Tabela.PNG";
 import texto from "./imagens/Gráficos/Texto.PNG";
 import {FaTimes} from "react-icons/fa";
+import Button from 'react-bootstrap/Button';
+
 
 const CriarComponente = ({createComp, parent}) => {
 
     const extent = parent !== "" ? 'parent' : '';
 
     const nodeData = { name: '', datatype: '', compCounter: '', varName: '',
-        graphType: '', dataExplain: [], parameterOptions: '', actions: []};
+        graphType: '', dataExplain: [], parameterOptions: '', actions: [], tooltip:''};
 
     const [node, setNode] = useState({ id: '', type: '', position:{ x: 50, y: 50 }, data: nodeData,
         parentNode: parent === undefined ? "" : parent.id, extent:extent});
@@ -37,7 +39,6 @@ const CriarComponente = ({createComp, parent}) => {
         mapaCoropletico, multiLinhas, pontos, relogio, tabela, texto];
 
     const changeComponentType = (type) => {
-        console.log(node);
         //reset
         node.data.dataType = '';
         node.data.dataExplain = [];
@@ -234,7 +235,7 @@ const CriarComponente = ({createComp, parent}) => {
                   </li>)}
               </ul>
               </div> : null}
-            <button  onClick={() => {createComp(node)}}> Criar componente!</button><br/>
+            <Button onClick={() => {createComp(node)}} variant="outline-secondary">Criar componente</Button>{' '}
     </div>
   );
 };

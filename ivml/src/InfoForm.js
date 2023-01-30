@@ -142,32 +142,32 @@ const InfoForm = ({nodes, edges, selectedNode, editComponent, getName}) => {
             : 
             <><b><h2><FaArrowLeft style={{alignItems: "center", cursor: "pointer"}} onClick={() => resetChanges()}/> Editar componente</h2></b><br/>
               <b><label htmlFor="text">Título: </label></b>
-            <input id="text" type="text" 
+              <input id="text" type="text" 
               defaultValue={component.data.name} onChange={(e) => (component.data.name = e.target.value)}/>
-            <br/><br/>
-            {selectedNode.type === "dados" ? <>
-            <b><label htmlFor="text">Tipo dos Dados:</label></b>
-            <select name="category" defaultValue={selectedNode.data.dataType} onChange={(e) => {component.data.datatype = e.target.value}}>
-                    <option value="DEFAULT" disabled>Escolher...</option>
-                    <option value="Binário">Binário</option>
-                    <option value="Contínuo">Contínuo</option>
-                    <option value="Discreto">Discreto</option>
-                    <option value="Arbitrário">Arbitrário</option>
-                    <option value="Ranking">Ranking</option>
-                    <option value="Categórico">Categórico</option>
-            </select>
-             <br/><br/>{handleDataSpec()}
-            </>
-            : selectedNode.type === "parametro" ? <>
-                      <b><label htmlFor="text">Opções:</label></b>
-                        <ul>
-                          {component.data.parameterOptions.map((option) => <li key={option}> {option}
-                            <button style={{marginLeft:"3px"}} onClick={() => deleteParamOption(option)} > <FaTimes pointerEvents={'none'}/></button>
-                          </li>)}
-                        </ul>
-                        <input id="text" type="text" onChange={(e) => setOptionName(e.target.value)}/>
-                        <button onClick={addParamOption}> Adicionar!</button>
-                    </>
+              <br/><br/>
+                {selectedNode.type === "dados" ? <>
+                <b><label htmlFor="text">Tipo dos Dados:</label></b>
+                <select name="category" defaultValue={selectedNode.data.dataType} onChange={(e) => {component.data.datatype = e.target.value}}>
+                        <option value="DEFAULT" disabled>Escolher...</option>
+                        <option value="Binário">Binário</option>
+                        <option value="Contínuo">Contínuo</option>
+                        <option value="Discreto">Discreto</option>
+                        <option value="Arbitrário">Arbitrário</option>
+                        <option value="Ranking">Ranking</option>
+                        <option value="Categórico">Categórico</option>
+                </select>
+                <br/><br/>{handleDataSpec()}
+                </>
+                : selectedNode.type === "parametro" ? <>
+                        <b><label htmlFor="text">Opções:</label></b>
+                          <ul>
+                            {component.data.parameterOptions.map((option) => <li key={option}> {option}
+                              <button style={{marginLeft:"3px"}} onClick={() => deleteParamOption(option)} > <FaTimes pointerEvents={'none'}/></button>
+                            </li>)}
+                          </ul>
+                          <input id="text" type="text" onChange={(e) => setOptionName(e.target.value)}/>
+                          <button onClick={addParamOption}> Adicionar!</button>
+                      </>
             : ""}<br/>
               <button onClick={() => {editComponent(component); setEditing(false)}}> Guardar Alterações!</button>
             <br/><br/></>
