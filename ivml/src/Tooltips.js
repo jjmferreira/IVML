@@ -83,9 +83,9 @@ const Tooltips = ({nodes, parent, getName, createTooltip, eliminateTooltip}) => 
                     <b><label htmlFor="text">Título do componente:</label></b>
                     <input id="text" type="text" value={title} onChange={(e) => setNewTitle(e.target.value)}/>
                     <br/><br/>
-                    <b><label htmlFor="text">Componentes de Dados da Visualização:</label></b>
-                    <br/> <br/>
-                    <select id="targets" name="category" defaultValue={'DEFAULT'} onChange={e => e.target.value === "Outro" ? setToCreate(true) : setToCreate(false)}>
+                    <b><label htmlFor="text">Especificação de Dados:</label></b>
+                    <br/>
+                    <select id="targets" style={{width:"18vh"}} name="category" defaultValue={'DEFAULT'} onChange={e => e.target.value === "Outro" ? setToCreate(true) : setToCreate(false)}>
                     <option value="DEFAULT" disabled>Escolher...</option>
                         {getDataChilds().map((dataN) => (            
                             <option key={dataN.id} value={getName(dataN)}>
@@ -95,30 +95,29 @@ const Tooltips = ({nodes, parent, getName, createTooltip, eliminateTooltip}) => 
                         <option key={"Outro"} value={"Outro"}>Outro</option>
                     </select>
                     {toCreate ? 
-                    <>
-                    <br></br><br></br>
-                    <b><label htmlFor="text">Nome dos dados a adicionar:</label></b>
-                    <input id="text" type="text" onChange={(e) => setNewDataName(e.target.value)}/>
-                    <br/><br/>
+                    <><br/><br/>
+                    <b><label htmlFor="text">Nome dos dados:</label></b>
+                    <input style={{width:"18vh"}} id="text" type="text" onChange={(e) => setNewDataName(e.target.value)}/>
                     </> : ""}
                     {' '}<Button onClick={() => {addTargetComponent()}} variant="outline-success">Adicionar</Button>
                     <ul>
                     {newNamesList.map(newData => <li key={newData}> {newData} 
                     <button onClick={() => deleteTargetComp(newData)} > <FaTimes pointerEvents={'none'}/></button> </li>)}
                     </ul>
-                    <br></br>
                     <>
-                    <label>
-                        Descrição da tooltip:
+                    <label >
+                        <b>Descrição da tooltip:</b>
                         <textarea
-                        value={description}
-                        onChange={e => setDescription(e.target.value)}
+                            style={{width:"100%"}}
+                            value={description}
+                            onChange={e => setDescription(e.target.value)}
                         />
                     </label>
                     </>
                 </div>
                 <br></br>
-                <Button onClick={() => createTool()} variant="success">Criar tooltip</Button>{'  '}<Button onClick={() => eliminateTool()} variant="danger">Eliminar</Button>
+                <Button onClick={() => createTool()} variant="secondary">{parent.data.tooltip !== '' ? "Editar" : "Criar"} tooltip</Button>
+            {'  '}{parent.data.tooltip !== '' ? <Button onClick={() => eliminateTool()} variant="danger">Eliminar</Button> : null}
 
         </div>
 

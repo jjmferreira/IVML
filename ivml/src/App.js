@@ -142,12 +142,47 @@ function App() {
 
   /** This hook lets you listen to selection changes */
   useOnSelectionChange({
-    onChange: ({ nodes, edges }) => {
-      let selected = nodes.find(node => node.selected)
-      if (selected === undefined)
-        selected = "";
-      if (parentNode.id !== selected.id)
-        setParentNode(selected);
+    onChange: ({ nodes: nds, edges:eds }) => {
+      // se houver um node selecionado, definir como parent
+      let selectedNode = nds.find(node => node.selected)
+      if (selectedNode === undefined)
+        selectedNode = "";
+      if (parentNode.id !== selectedNode.id)
+        setParentNode(selectedNode);
+
+      const selectedEdge = eds.find(e => e.selected);
+      setEdges(edges.map(edge => {
+        //apenas mostrar label se houver um edge selecionado
+        let isVisible = selectedEdge !== undefined ? edge.id === selectedEdge.id : false;
+
+        const source = nodes.find(node => node.id === edge.source);
+        if (source !== undefined){
+          const action = source.data.actions.find(action => action.id === edge.data);
+          if (action !== undefined) {
+            //mostrar sempre labels de dashboards e links
+            if (action.result === "Dashboard" || action.result === "Link") {
+              edge.label = action.result;
+            } else { //construir label da ação
+              //procurar edges que contêm a mesma source e action
+              const actionEdges = edges.filter(ed => ed.source === source.id && ed.data === action.id);
+              //procurar componentes afetados pela mesma ação
+              const targets = nodes.filter(nd => actionEdges.find(t => t.target === nd.id) !== undefined);
+              edge.label = action.result + " por " + action.trigger + " =>" + targets.map(target => " " + nodeLabel(target));
+            }
+          }
+        }
+
+        if (isVisible) {
+          edge.labelStyle = {visibility: 'visible'};
+          edge.zIndex = 2;
+        }else {
+          edge.labelStyle = {visibility: 'hidden'};
+          edge.zIndex = 0;
+        }
+
+        edge.labelShowBg = isVisible;
+        return edge;
+      }));
     },
   });
 
@@ -159,13 +194,13 @@ function App() {
       alert('You cant create a data component without name')
       return;
     }
-    
 
     //adicionar novo node
     let n = JSON.parse(JSON.stringify(node));
     n.id = nodes.length === 0 ? "0" : "" + (parseInt(nodes[nodes.length-1].id)+1);
     const components = nodes.filter(nd => nd.type === node.type);
-    const lastIndex = components.length === 0 ? "0" : "" + components.length;
+    console.log(components);
+    const lastIndex = components.length === 0 ? "0" : "" + (parseInt(components[components.length-1].data.compCounter.substr(1))+1);
     if(n.type !== "titulo" && n.type !== "dados" && n.type !== "varvisual" && n.type !== "grafico")
       n.data.compCounter = node.type.substr(0,1).toUpperCase() + lastIndex;
     setNodes([...nodes, n]);
@@ -242,7 +277,6 @@ function App() {
     }
   }
 
-  //TODO: Remover opções INFO/CREATE/INTERACTION e da TOOLBAR dos components
  const iconsSetUp = (click, node) => {
   let buttonName = click.target.name;
     switch(buttonName){
