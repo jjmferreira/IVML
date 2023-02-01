@@ -1,5 +1,5 @@
 import {NodeToolbar, Handle, Position } from 'reactflow';
-import {FaInfo, FaTrashAlt} from 'react-icons/fa'
+import {FaTrashAlt} from 'react-icons/fa'
 import { NodeResizer } from '@reactflow/node-resizer';
 import '@reactflow/node-resizer/dist/style.css';
 
@@ -41,7 +41,6 @@ const Visualizacao = ({data, selected}) => {
     <>
       <div className="vis-node" >
         <NodeToolbar className="node-toolbar" isVisible={selected} position={Position.Top}>
-            <button title="Informação do Componente" name="Info"> <FaInfo pointerEvents={'none'}/> </button>
             {data.tooltip !== "" ? 
             <OverlayTrigger trigger="click" placement="right" overlay={popover}>
               <Button variant="success" className="btn-primary">Tooltip!</Button>

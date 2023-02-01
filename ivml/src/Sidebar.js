@@ -4,7 +4,7 @@ import InfoForm from "./InfoForm";
 import CriarInteracao from "./CriarInteracao";
 import Tooltips from "./Tooltips";
 
-const Sidebar = ({createComp, nodes, selected, edges, getName, editNode, createAction, createNavigation, createTooltip, eliminateTooltip}) => {
+const Sidebar = ({createComp, nodes, selected, edges, getName, editNode, createAction, createNavigation, createTooltip, eliminateTooltip, editNavNode}) => {
 
     const allowsInteractions = selected !== "" && selected.type !== "grafico" && selected.type !== "varvisual"
         && selected.type !== "titulo" && selected.type !== "dashboard" && selected.type !== "link";
@@ -36,27 +36,11 @@ const Sidebar = ({createComp, nodes, selected, edges, getName, editNode, createA
                 : tab === "tooltip"  && selected.type === "visualizacao" ? <Tooltips nodes={nodes} parent={selected} getName={getName} createTooltip={createTooltip} eliminateTooltip={eliminateTooltip} />
                 : allowsInteractions && tab === "interaction" ?
                         <CriarInteracao getName={getName} edges={edges} nodes={nodes}
-                                        source={selected} actionsDone={createAction} createNav={createNavigation}/> : null}
+                                        source={selected} actionsDone={createAction} createNav={createNavigation} editNavNode={editNavNode}/> : null}
             </div></> : null}
             </> : <CriarComponente createComp={createComp} parent={""}/>}
     </div> );
 };
 
-function createLayout(nodes, selectNode, getName){
-    const parents = nodes.slice();
-    const children = nodes.slice();
-    return <div className="box-content" style={{height: "300px", overflowY: "scroll", overflowX: "hidden", whiteSpace: "nowrap"}}>
-        <ul style={{textOverflow: "ellipsis", margin: "0px", paddingLeft: "16px"}}>{parents.filter((node) => node.parentNode === "").map((node) => (
-        <li key={node.id} value={node.id} >
-            <label onClick={() => selectNode(node.id)}>{getName(node)}</label>
-            <ul>
-            {children.filter((child) => child.parentNode === node.id).map((n) => (
-                <li key={n.id} value={n.id}>
-                    <i onClick={() => selectNode(n.id)}>{getName(n)}</i>
-                </li>
-            ))}</ul>
-        </li>
-    ))}</ul></div>
-};
 
 export default Sidebar;

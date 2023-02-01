@@ -1,5 +1,5 @@
 import {Handle, NodeToolbar, Position} from 'reactflow';
-import {FaTrashAlt, FaInfo} from 'react-icons/fa'
+import {FaTrashAlt} from 'react-icons/fa'
 import {NodeResizer} from "@reactflow/node-resizer";
 
 function Dados({data, selected}) {
@@ -14,7 +14,6 @@ function Dados({data, selected}) {
   return (
     <div className="dados-node">
         <NodeToolbar className="node-toolbar" isVisible={selected} position={Position.Top}>
-            <button  name="Info"> <FaInfo pointerEvents={'none'}/> </button>
             <button  name="Remove" > <FaTrashAlt style={{color: 'red'}} pointerEvents={'none'}/> </button>
         </NodeToolbar>
         <NodeResizer color="#307DBB" isVisible={selected} minWidth={20} minHeight={20} />

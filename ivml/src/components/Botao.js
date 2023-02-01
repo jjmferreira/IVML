@@ -1,5 +1,5 @@
 import {Handle, NodeToolbar, Position} from 'reactflow';
-import {FaInfo, FaTrashAlt} from 'react-icons/fa'
+import {FaTrashAlt} from 'react-icons/fa'
 import {NodeResizer} from "@reactflow/node-resizer";
 
 function Botao({data, selected}) {
@@ -15,7 +15,6 @@ function Botao({data, selected}) {
   return (
     <div className="button-node">
         <NodeToolbar className="node-toolbar" isVisible={selected} position={Position.Top}>
-            <button title="Informação do Componente" name="Info"> <FaInfo pointerEvents={'none'}/> </button>
             <button title="Eliminar Componente" name="Remove" > <FaTrashAlt style={{color: 'red'}} pointerEvents={'none'}/></button>
         </NodeToolbar>
         <NodeResizer color="#307DBB" isVisible={selected} minWidth={50} minHeight={25} />

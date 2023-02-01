@@ -8,7 +8,6 @@ const Tooltips = ({nodes, parent, getName, createTooltip, eliminateTooltip}) => 
     const [tooltip, setTooltip] = useState({title: '', dataComps: '', description: ''});
 
     const [title, setNewTitle] = useState(parent.data.tooltip !== '' ? parent.data.tooltip.title : '')
-    const [targetData, setTargetData] = useState(parent.data.tooltip !== '' ? parent.data.tooltip.dataComps : []);
     const [description, setDescription] = useState(parent.data.tooltip !== '' ? parent.data.tooltip.description : '')
 
     //Set new data name value
@@ -39,6 +38,9 @@ const Tooltips = ({nodes, parent, getName, createTooltip, eliminateTooltip}) => 
               if(newDataName !== ""){
                 setNewNamesList([...newNamesList, newDataName]);
                 setNewDataName("");
+                setToCreate(false);
+                document.getElementById("targets").value = "DEFAULT"
+                return;
               } else{
                 alert('The data component must have a name!')
               }

@@ -4,7 +4,7 @@ import {FaTimes} from "react-icons/fa";
 import Button from 'react-bootstrap/Button';
 
 
-const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav}) => {
+const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav, editNavNode}) => {
 
   const [actionName, setActionName] = useState("");
   const [targetComponents, setTargetComponents] = useState([]);
@@ -15,6 +15,13 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
   const [selectedInteraction, setSelectedInteraction] = useState("");
 
   const [newCompName, setNewCompName] = useState('');
+
+  //To create link and dash form
+  const [toCreate, setToCreate] = useState(false)
+
+  const [curVal, setCurVal] = useState("")
+
+
 
 
   const nodeData = { name: '', datatype: '', compCounter: '', varName: '',
@@ -37,6 +44,7 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
     setTargetComponents([]);
     setActionResult("")
     setActionName("");
+    setToCreate(false);
   }
 
   const createNavigation = () => {
@@ -45,7 +53,7 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
     } else{
       if(source.data.actions.find(a => a.name === actionName)){
         alert('Já existe uma interação com esse nome. Altere o nome ou escolha a opção "Selecionar existente"')
-      }else if(targetComponents.length === 0){
+      }else if(targetComponents.length === 0 || document.getElementById("targets").value === "Outro"){
         const action = {id: source.data.actions.length, name:actionName, result: actionResult, trigger: sourceIcon}
         source.data.actions.push(action);
         nodeData.name = newCompName;
@@ -121,15 +129,29 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
     })
     return currentTargetsID;
   }
-  
 
-  const hasTarget = () => {
-    if(targetComponents.length !== 0){
-      return true;
-    }
-    return false;
+  const getNavigationNode = (interaction) => {
+    let dashtarget = '';
+    edges.map((edge) => {
+      if(edge.source === source.id && interaction.id === edge.data){
+        return dashtarget = edge.target
+      }
+    })
+    let n = nodes.find(node => node.id === dashtarget);
+    return n;
   }
-
+  
+  const editNav = (interaction) => {
+    let n = getNavigationNode(interaction);
+    nodeData.name = curVal;
+    nodeData.compCounter = n.data.compCounter
+    n.data = nodeData
+    n.type = n.type;
+    setNode(n)
+    clearForm();
+    editNavNode(n)
+  }
+  
     return (
     <div>
         <div className="box">
@@ -187,7 +209,7 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
           </> : 
           <>
           <div>
-          <select id="targets" style={{maxWidth: "20vh"}} name="category" defaultValue={'DEFAULT'} >
+          <select id="targets" style={{maxWidth: "20vh"}} name="category" defaultValue={'DEFAULT'} onChange={e => e.target.value === "Outro" ? setToCreate(true) : setToCreate(false)}>
           <option value="DEFAULT" disabled>Escolher...</option>
               {nodes.map((node) => (
                 node.type === actionResult.toLocaleLowerCase() ?              
@@ -195,16 +217,19 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
                   {getName(node)}
                 </option> : ''
             ))}
-          </select>{' '}<Button onClick={() => {addTargetComponent()}} variant="outline-secondary">Adicionar</Button>
+              <option key={"Outro"} value={"Outro"}>Outro</option>
+          </select>
+          {!toCreate ? 
+          <>{' '}<Button onClick={() => {addTargetComponent()}} variant="outline-secondary">Adicionar</Button>
           <ul>
           {targetComponents.map(targetC => <li key={targetC}> {getName(nodes.find(node => node.id === targetC))} 
           <button onClick={() => deleteTargetComp(targetC)} > <FaTimes pointerEvents={'none'}/></button> </li>)}
           </ul>
-          {!hasTarget() ? <>
+          </> : <>
           {actionResult === 'Dashboard' ? <b><label htmlFor="text">Título do componente:</label></b> : <b><label htmlFor="text">Link:</label></b>}
           <input id="text" type="text" onChange={(e) => setNewCompName(e.target.value)}/>
           <br/><br/>
-          </> : ""} 
+          </>}
           <Button onClick={createNavigation} variant="outline-secondary">Criar interação!</Button>{' '}      
           </div>
           </>  } 
@@ -241,25 +266,19 @@ const CriarInteracao = ({source, nodes, edges, actionsDone, getName, createNav})
                       </option> : ''
               ))}
             </select>{' '}<Button onClick={() => {addTargetComponent()}} variant="outline-secondary">Adicionar</Button>
-            </> : 
-            <>
-            <b><label htmlFor="text"> Componentes afetados: </label></b><br/><br/>
-            <select id="targets" style={{maxWidth: "20vh"}} name="category" defaultValue={'DEFAULT'} >
-              <option value="DEFAULT" disabled>Escolher...</option>
-              {nodes.map((node) => (
-                  node.type === selectedInteraction.result.toLocaleLowerCase() ?
-                      <option key={node.id} value={node.id}>
-                        {getName(node)}
-                      </option> : ''
-              ))}
-            </select><button onClick={() => {addTargetComponent()}}>Adicionar</button></>}
-            
             <ul>
               {getTargets(selectedInteraction).map(targetid => <li key={targetid}> {getName(nodes.find(node => node.id === targetid))}</li>)}
               {targetComponents.map(targetC => <li key={targetC}> {getName(nodes.find(node => node.id === targetC))}
                 <button onClick={() => deleteTargetComp(targetC)} > <FaTimes pointerEvents={'none'}/></button> </li>)}
             </ul>
             <Button variant={"secondary"} onClick={() => extendAction(selectedInteraction)}> Editar Interação!</Button><br/>
+            </> : 
+            <>
+            <b><label htmlFor="text">Título do componente:</label></b> 
+              <input id="text" type="text" defaultValue={getNavigationNode(selectedInteraction).data.name} onChange={(e) => setCurVal(e.target.value)}/>
+            <br/><br/>
+            <Button variant={"secondary"} onClick={() => editNav(selectedInteraction)}> Editar Interação!</Button><br/>
+            </>}    
           </> : ""
           }
           

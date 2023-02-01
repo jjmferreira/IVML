@@ -18,10 +18,6 @@ import Dashboard from './components/Dashboard'
 import Link from './components/Link'
 
 
-import AlertMessage from './components/AlertMessage';
-//Bootstrap
-import Alert from 'react-bootstrap/Alert';
-
 
 
 import './components/componentes.css';
@@ -60,7 +56,6 @@ function App() {
 
   //Variável para passar o id do parent node
   const [parentNode, setParentNode] = useState("");
-
 
 
 
@@ -188,8 +183,7 @@ function App() {
 
   const createNode = (node) => {
     if (node === undefined || node.type === ''){
-      //alert('Escolha um tipo de componente')
-      return <AlertMessage isValid={true}/>;
+      alert('Escolha um tipo de componente')
     } else if (node.type === "dados" && node.data.name === ''){
       alert('You cant create a data component without name')
       return;
@@ -252,6 +246,11 @@ function App() {
     editNode(n);
   }
 
+  const editNavNode = (node) =>{
+    console.log(node.type + " Na APp")
+    editNode(node);
+  }
+
 
 
   const deleteActionFromNode = (eds) => {
@@ -301,7 +300,8 @@ function App() {
         createAction={createInteraction}
         createNavigation={createNavigation}
         createTooltip={createTooltip}
-        eliminateTooltip={eliminateTooltip}/>
+        eliminateTooltip={eliminateTooltip}
+        editNavNode={editNavNode}/>
         <ReactFlow
         nodes={nodes}
         edges={edges}

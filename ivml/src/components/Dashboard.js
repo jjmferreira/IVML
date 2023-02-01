@@ -1,9 +1,9 @@
 import {NodeToolbar, Handle, Position } from 'reactflow';
-import {FaInfo, FaTrashAlt} from 'react-icons/fa'
+import {FaTrashAlt} from 'react-icons/fa'
 import { NodeResizer } from '@reactflow/node-resizer';
 import '@reactflow/node-resizer/dist/style.css';
 
-const Visualizacao = ({data, selected}) => {
+const Dashboard = ({data, selected}) => {
 
   const handleVisibility = (trigger) => {
     if(data.actions.filter(action => action.trigger === trigger).length > 0)
@@ -16,7 +16,6 @@ const Visualizacao = ({data, selected}) => {
     <>
       <div className="dashboard-node" >
         <NodeToolbar className="node-toolbar" isVisible={selected} position={Position.Top}>
-            <button title="Informação do Componente" name="Info"> <FaInfo pointerEvents={'none'}/> </button>
             <button title="Eliminar Componente" name="Remove" > <FaTrashAlt style={{color: 'red'}} pointerEvents={'none'}/></button>
         </NodeToolbar>
         <NodeResizer color="#307DBB" isVisible={selected} minWidth={100} minHeight={75} />
@@ -32,4 +31,4 @@ const Visualizacao = ({data, selected}) => {
     
   );
   }
-export default Visualizacao;
+export default Dashboard;
