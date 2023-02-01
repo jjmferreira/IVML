@@ -195,7 +195,7 @@ function App() {
     const components = nodes.filter(nd => nd.type === node.type);
     console.log(components);
     const lastIndex = components.length === 0 ? "0" : "" + (parseInt(components[components.length-1].data.compCounter.substr(1))+1);
-    if(n.type !== "titulo" && n.type !== "dados" && n.type !== "varvisual" && n.type !== "grafico")
+    if(n.type !== "titulo" && n.type !== "dados" && n.type !== "varvisual" && n.type !== "grafico" && n.type !== "link")
       n.data.compCounter = node.type.substr(0,1).toUpperCase() + lastIndex;
     setNodes([...nodes, n]);
 
