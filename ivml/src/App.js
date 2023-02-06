@@ -184,9 +184,13 @@ function App() {
   const createNode = (node) => {
     if (node === undefined || node.type === ''){
       alert('Escolha um tipo de componente')
-    } else if (node.type === "dados" && node.data.name === ''){
-      alert('You cant create a data component without name')
       return;
+    } else if (node.type === "dados"){
+        if(node.data.name === '') {
+          alert('You cant create a data component without name')
+          console.log(node.data.dataType)
+          return;
+        } 
     }
 
     //adicionar novo node
@@ -279,10 +283,10 @@ function App() {
  const iconsSetUp = (click, node) => {
   let buttonName = click.target.name;
     switch(buttonName){
+      //BOTAO ESTA LIXADO
       case "Remove":
         const result = nodes.filter((n) => (n.id !== node.id) && (n.parentNode !== node.id));
         setNodes(result);
-        setEdges(edges.filter((ed) => (result.includes(n => n.id === ed.source || n.id === ed.target))));
         break;
       default: return;
     } 

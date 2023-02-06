@@ -1,5 +1,5 @@
 import {FaTrashAlt} from 'react-icons/fa'
-import {NodeToolbar, Position} from "reactflow";
+import {Handle, NodeToolbar, Position} from "reactflow";
 import {NodeResizer} from "@reactflow/node-resizer";
 
 
@@ -12,6 +12,7 @@ function Titulo({data, selected}) {
       <button  name="Remove" > <FaTrashAlt style={{color: 'red'}} pointerEvents={'none'}/> Remover</button>
     </NodeToolbar>
     <NodeResizer color="#307DBB" isVisible={selected} minWidth={50} minHeight={25} />
+    {<Handle type="target" position={Position.Left} id="a" style={{visibility: 'hidden'}} isConnectable={false}/> }
   </div>
   );
 }

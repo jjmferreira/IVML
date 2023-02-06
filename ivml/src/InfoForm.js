@@ -6,6 +6,8 @@ const InfoForm = ({nodes, edges, selectedNode, editComponent, getName}) => {
 
   const [component, setComponent] = useState(selectedNode !== undefined ? JSON.parse(JSON.stringify(selectedNode)): null); //copy node
   const [editing, setEditing] = useState(false);
+  const [edited, setEdited] = useState(false);
+
   const [optionName, setOptionName] = useState("");
   const [options, setOptions] = useState(selectedNode.data.dataExplain);
   const [paramOptions, setParamOptions] = useState([]);
@@ -19,6 +21,7 @@ const InfoForm = ({nodes, edges, selectedNode, editComponent, getName}) => {
     setParamOptions(selectedNode.data.parameterOptions);
     setComponent(JSON.parse(JSON.stringify(selectedNode))); //copy node
     setEditing(false);
+    setEdited(false)
   }
 
   const addOption = () => {
@@ -50,6 +53,7 @@ const InfoForm = ({nodes, edges, selectedNode, editComponent, getName}) => {
 
   const handleDataSpec = () => {
     let header = "";
+    console.log(component.data.dataType + " likeee")
     switch(component.data.dataType){
       case "Ranking":
         header = (<b><label htmlFor="text">Adicionar ranking:</label></b>);
@@ -130,31 +134,31 @@ const InfoForm = ({nodes, edges, selectedNode, editComponent, getName}) => {
 
     return (
           <div className="box">
-            {!editing ?
+            {!editing ? 
             <><b><h3>Informações sobre o componente <FaPencilAlt style={{alignItems: "center", cursor: "pointer"}} onClick={() => setEditing(true)}/></h3></b>
-            <br/><b>Nome do componente: </b>{getName(selectedNode)}<br/>
-              {selectedNode.data.parameterOptions.length > 0 ? <>
+            <br/><b>Nome do componente: </b>{edited ? getName(component) : getName(selectedNode)}<br/>
+              {(!edited ? selectedNode.data.parameterOptions.length > 0 : component.data.parameterOptions.length > 0) ? <>
                 <br/><b><label htmlFor="text">Opções:</label></b>
                 <ul>{component.data.parameterOptions.map((option) => <li key={option}> {option}
                 </li>)}</ul></> : null}
-            {selectedNode.type === "dados " ? <><br/><b>Tipo de Dados: </b>{selectedNode.data.dataType}<br/>
-                  {options.length !== 0 ? <><br/><b>Especificação dos Dados: </b>
-                    {selectedNode.data.dataExplain.map(option => <li key={keyCounter++}> {option} </li>)}<br/></> : ''}</> : null}
-            {selectedNode.data.actions.length !== 0 ? <>
+            {component.type === "dados" ? <><br/><b>Tipo de Dados: </b>{edited ? component.data.dataType : selectedNode.data.dataType}<br/>
+                  {selectedNode.data.dataExplain.length !== 0 || component.data.dataExplain.length !== 0 ? <><br/><b>Especificação dos Dados: </b>
+                    {component.data.dataExplain.map(option => <li key={keyCounter++}> {option} </li>)}<br/></> : ''}</> : null}
+            {component.data.actions.length !== 0 ? <>
               <br/><button style={{width:"100%", display:"inline-grid"}} className={"tab"} onClick={() => setOpenActions(!openActions)}>
                 Ver Interações {openActions ? <FaChevronUp style={{position:"absolute", justifySelf:"end"}}/>
                 : <FaChevronDown style={{position:"absolute", justifySelf:"end"}}/>}</button>
-                {openActions ? showActions(selectedNode.data.actions) : null}</> : <><br/><hr/></>}
+                {openActions ? showActions(component.data.actions) : null}</> : <><br/><hr/></>}
             </>
             : 
             <><b><h2><FaArrowLeft style={{alignItems: "center", cursor: "pointer"}} onClick={() => resetChanges()}/> Editar componente</h2></b><br/>
               <b><label htmlFor="text">Título: </label></b>
               <input id="text" type="text" 
-              defaultValue={component.data.name} onChange={(e) => (component.data.name = e.target.value)}/>
+              defaultValue={component.data.name} onChange={(e) => {(component.data.name = e.target.value); setComponent(component)}}/>
               <br/><br/>
                 {selectedNode.type === "dados" ? <>
                 <b><label htmlFor="text">Tipo dos Dados:</label></b>
-                <select name="category" defaultValue={selectedNode.data.dataType} onChange={(e) => {component.data.datatype = e.target.value}}>
+                <select name="category" defaultValue={component.data.dataType} onChange={(e) => {component.data.dataType = e.target.value; setComponent(component)}}>
                         <option value="DEFAULT" disabled>Escolher...</option>
                         <option value="Binário">Binário</option>
                         <option value="Contínuo">Contínuo</option>
@@ -176,7 +180,7 @@ const InfoForm = ({nodes, edges, selectedNode, editComponent, getName}) => {
                           <button onClick={addParamOption}> Adicionar!</button>
                       </>
             : ""}<br/>
-              <button onClick={() => {editComponent(component); setEditing(false)}}> Guardar Alterações!</button>
+              <button onClick={() => {editComponent(component); setEditing(false); setEdited(true)}}> Guardar Alterações!</button>
             <br/><br/></>
             }
           </div>

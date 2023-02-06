@@ -23,7 +23,7 @@ const CriarComponente = ({createComp, parent}) => {
 
     const extent = parent !== "" ? 'parent' : '';
 
-    const nodeData = { name: '', datatype: '', compCounter: '', varName: '',
+    const nodeData = { name: '', dataType: '', compCounter: '', varName: '',
         graphType: '', dataExplain: [], parameterOptions: '', actions: [], tooltip:''};
 
     const [node, setNode] = useState({ id: '', type: '', position:{ x: 50, y: 50 }, data: nodeData,
